@@ -10,5 +10,3 @@ https://www.flipcode.com/archives/Raytracing_Topics_Techniques-Part_1_Introducti
 
 First we will implement mathematical 3D-vectors as a class.
 Initially some basic arithmetics, more added as needed.
-
-
