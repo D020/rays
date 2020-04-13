@@ -1,20 +1,21 @@
-LINK_TARGET = main.exe
+CC := g++
+CFLAGS := -Wall -g
+TARGET := main
 
-all: $(LINK_TARGET)
-	
+rt = $(shell pwd)
 
-OBJS = main.o
+all: main
 
-REBUILDABLES = $(OBJS) $(LINK_TARGET)
+main: main.o $(rt)/src/Vec3.o
+	g++ -o main main.o $(rt)/src/Vec3.o
+
+main.o:
+	g++ -c main.cpp
+
+/src/Vec3.o:
+	g++ -c $(rt)/src/Vec3.cpp
 
 clean:
-	rm -f $(REBUILDABLES)
-
-$(LINK_TARGET) : $(OBJS)
-	g++ -g -o $@ $^
-
-%.o : %.cpp
-	g++ -g -o $@ -c $<
-
-main.o : main.h
-
+	rm -rf $(TARGET) *.o
+	
+.PHONY: all clean
