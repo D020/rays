@@ -7,6 +7,8 @@ public:
 	Ray();
 	Ray(Vec3 org, Vec3 dir);
 	void print();
+	Vec3 getOrg();
+	Vec3 getDir();
 private:
 	Vec3 org;
 	Vec3 dir;

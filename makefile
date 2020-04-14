@@ -6,8 +6,8 @@ rt = $(shell pwd)
 
 all: main
 
-main: main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o
-	g++ -o main main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o
+main: main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o $(rt)/src/Primitive.o $(rt)/src/Sphere.o
+	g++ -o main main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o $(rt)/src/Primitive.o $(rt)/src/Sphere.o
 
 main.o:
 	g++ -c main.cpp
@@ -21,7 +21,13 @@ main.o:
 /src/Ray.o:
 	g++ -c $(rt)/src/Ray.cpp
 
+/src/Primitive.o:
+	g++ -c $(rt)/src/Primitive.cpp
+
+/src/Sphere.o:
+	g++ -c $(rt)/src/Sphere.cpp
+
 clean:
-	rm -rf main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o
+	rm -rf main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o $(rt)/src/Primitive.o $(rt)/src/Sphere.o $(rt)/src/Sphere.o main 
 	
 .PHONY: all clean

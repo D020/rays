@@ -15,6 +15,13 @@ Vec3::Vec3(float x,
 	this->z = z;
 }
 
+void Vec3::print(bool verbose){
+	printf("x, y, z = %f, %f, %f\n", x, y, z);
+	if(verbose){
+		printf("len = %f\n\n",this->length());
+	}
+}
+
 float Vec3::length(){
 	return sqrt(x*x + y*y + z*z);
 }
@@ -25,9 +32,4 @@ Vec3 Vec3::norm(){
 	return res;
 }
 
-void Vec3::print(bool verbose){
-	printf("x, y, z = %f, %f, %f\n", x, y, z);
-	if(verbose){
-		printf("len = %f\n\n",this->length());
-	}
-}
+

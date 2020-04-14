@@ -10,3 +10,14 @@ https://www.flipcode.com/archives/Raytracing_Topics_Techniques-Part_1_Introducti
 
 First we will implement mathematical 3D-vectors as a class.
 Initially some basic arithmetics, more added as needed.
+
+2020 April 14th
+
+Iteratively implementing rays, vectors and primitives.
+TO DO:
+	1: Overload operators for vectors for dot products and addition etc.
+	2: Finish intersect code for Sphere.
+	3: Write a scene class
+	4: Spawn rays
+
+

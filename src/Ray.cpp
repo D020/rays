@@ -11,6 +11,14 @@ Ray::Ray(Vec3 org, Vec3 dir){
 	this->dir = dir;
 }
 
+Vec3 Ray::getOrg(){
+	return this->org;
+}
+
+Vec3 Ray::getDir(){
+	return this->dir;
+}
+
 void Ray::print(){
 	printf("Origin: ");
 	org.print(false);
