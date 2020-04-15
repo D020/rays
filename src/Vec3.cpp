@@ -3,8 +3,8 @@
 #include <stdio.h>
 Vec3::Vec3(){
 	x = 0;
-	y = 1;
-	z = 2;
+	y = 0;
+	z = 0;
 }
 
 Vec3::Vec3(float x,
@@ -13,6 +13,13 @@ Vec3::Vec3(float x,
 	this->x = x;
 	this->y = y;
 	this->z = z;
+}
+
+Vec3& Vec3::operator = (const Vec3 &other){
+	this->x = other.x;
+	this->y = other.y;
+	this->z = other.z;
+	return *this;
 }
 
 void Vec3::print(bool verbose){
@@ -49,7 +56,7 @@ Vec3 operator - (const Vec3 &a, const Vec3 &b) {
 } 
 
 float operator * (const Vec3 &a, const Vec3 &b) { 
-	float res;
+	float res = 0;
 	res += a.x * b.x;
 	res += a.y * b.y;
 	res += a.z * b.z;

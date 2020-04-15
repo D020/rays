@@ -23,11 +23,11 @@ TO DO:
 2020 April 15th
 
 TO DO:
-	1: Finish intersect code for Sphere.
 
-	2: Write a scene class
 
-	3: Spawn rays
+	1: Write a scene class
+
+	2: Spawn rays
 
 
 

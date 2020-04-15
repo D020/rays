@@ -3,6 +3,8 @@
 #include "src/Vec3.h"
 #include "src/Plot.h"
 #include "src/Ray.h"
+#include "src/Primitive.h"
+#include "src/Sphere.h"
 
 using namespace std;
 
@@ -19,12 +21,16 @@ int main() {
 	image.plot(1280-1,720-1,0,255,0);
 	//image.save("test.ppm");
 
-	Ray lol(Vec3(1,2,3),Vec3(4,5,6));
-	lol.print();
-	
-
 	float dotprod = testvec * testvec;
 	printf("%f\n",dotprod);
+
+
+	Sphere ball(Vec3(0,0,0),5);
+	Ray ray(Vec3(0,0,-6),Vec3(0,0,1));
+
+	Collision res = ball.intersect(ray);
+
+	printf("%f\n",res.distance);
 
     return 0;
 }

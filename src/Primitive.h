@@ -10,6 +10,9 @@ struct Collision {
 };
 
 class Primitive {
+
+friend class Sphere;
+
 public:
 	Primitive();
 	Primitive(Vec3 org);
