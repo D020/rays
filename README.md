@@ -15,9 +15,14 @@ Initially some basic arithmetics, more added as needed.
 
 Iteratively implementing rays, vectors and primitives.
 TO DO:
+
+
 	1: Overload operators for vectors for dot products and addition etc.
+
 	2: Finish intersect code for Sphere.
+
 	3: Write a scene class
+
 	4: Spawn rays
 
 2020 April 15th
