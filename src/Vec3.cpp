@@ -32,4 +32,42 @@ Vec3 Vec3::norm(){
 	return res;
 }
 
+Vec3 operator + (const Vec3 &a, const Vec3 &b) { 
+	Vec3 res;
+	res.x = a.x + b.x;
+	res.y = a.y + b.y;
+	res.z = a.z + b.z;
+	return res; 
+} 
 
+Vec3 operator - (const Vec3 &a, const Vec3 &b) { 
+	Vec3 res;
+	res.x = a.x - b.x;
+	res.y = a.y - b.y;
+	res.z = a.z - b.z;
+	return res; 
+} 
+
+float operator * (const Vec3 &a, const Vec3 &b) { 
+	float res;
+	res += a.x * b.x;
+	res += a.y * b.y;
+	res += a.z * b.z;
+	return res; 
+} 
+
+Vec3 operator * (const Vec3 &a, float scalar) { 
+	Vec3 res;
+	res.x = a.x * scalar;
+	res.y = a.y * scalar;
+	res.z = a.z * scalar;
+	return res;
+} 
+
+Vec3 operator * (float scalar, const Vec3 &a) { 
+	Vec3 res;
+	res.x = a.x * scalar;
+	res.y = a.y * scalar;
+	res.z = a.z * scalar;
+	return res;
+} 
