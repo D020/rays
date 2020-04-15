@@ -30,9 +30,12 @@ TO DO:
 TO DO:
 
 
-	1: Write a scene class
+	1: Spawn rays
 
-	2: Spawn rays
+	2: Clean up MAKEFILE
 
+	3: Multithreading
+
+	4: Animation
 
 

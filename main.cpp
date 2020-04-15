@@ -5,32 +5,22 @@
 #include "src/Ray.h"
 #include "src/Primitive.h"
 #include "src/Sphere.h"
+#include "src/Scene.h"
 
 using namespace std;
 
 int main() {
 
-	Vec3 testvec(3,4,5);
-	testvec.print(true);
+	printf("\n\n\n\n\n");
 
-	Vec3 normvec = testvec.norm();
-	normvec.print(true);
+	Sphere ball1(Vec3(0,0,0),2);
+	Sphere ball2(Vec3(3,0,0),3);
 
-	Plot image(1280,720);
-	image.plot(1280/2,720/2,255,0,0);
-	image.plot(1280-1,720-1,0,255,0);
-	//image.save("test.ppm");
+	Scene testscene(1280,720);
+	testscene.addPrimitive(&ball1);
+	testscene.addPrimitive(&ball2);
 
-	float dotprod = testvec * testvec;
-	printf("%f\n",dotprod);
-
-
-	Sphere ball(Vec3(0,0,0),5);
-	Ray ray(Vec3(0,0,-6),Vec3(0,0,1));
-
-	Collision res = ball.intersect(ray);
-
-	printf("%f\n",res.distance);
+	testscene.print();
 
     return 0;
 }

@@ -16,7 +16,7 @@ friend class Sphere;
 public:
 	Primitive();
 	Primitive(Vec3 org);
-	void print();
+	virtual void print();
 	Vec3 getOrg();
 
 	Collision intersect(Ray ray);

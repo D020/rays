@@ -7,7 +7,7 @@ class Sphere : public Primitive {
 public:
 	Sphere(Vec3 org, float radius);
 	Collision intersect(Ray ray);
-	void print();
+	virtual void print();
 private:
 	float radius;
 };

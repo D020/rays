@@ -13,6 +13,14 @@ Plot::Plot(int width, int height){
 	buf = (unsigned char*) calloc(width*height*3,sizeof(unsigned char));
 }
 
+int Plot::getWidth(){
+	return width;
+}
+
+int Plot::getHeight(){
+	return height;
+}
+
 void Plot::plot(int x, int y, int r, int g, int b){
 	bool insideWidth  = (0<=x && x<width);
 	bool insideHeight = (0<=y && y<height);
