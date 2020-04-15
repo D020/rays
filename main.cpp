@@ -21,6 +21,8 @@ int main() {
 	testscene.addPrimitive(&ball2);
 
 	testscene.print();
+	testscene.setRays(Vec3(0,0,-5),Vec3(0,0,1));
+	testscene.render("test.ppm");
 
     return 0;
 }

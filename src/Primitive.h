@@ -19,7 +19,7 @@ public:
 	virtual void print();
 	Vec3 getOrg();
 
-	Collision intersect(Ray ray);
+	virtual Collision intersect(Ray ray);
 
 private:
 	Vec3 org;

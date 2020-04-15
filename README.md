@@ -27,15 +27,27 @@ TO DO:
 
 2020 April 15th
 
-TO DO:
+We have tracing! Yay! \o/
+
+![Alt text](test.jpg?raw=true "First trace")
+
+TO DO (Not ordered):
 
 
-	1: Spawn rays
+	1: Write proper color handling
 
-	2: Clean up MAKEFILE
+	2: Write recursive raytrace
 
-	3: Multithreading
+	3: Add lights
+	
+	4: Add primitive type plane
 
-	4: Animation
+	5: Add primitive type triangle
+
+	6: Clean up MAKEFILE
+
+	7: Multithreading
+
+	8: Animation
 
 

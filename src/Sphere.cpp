@@ -26,7 +26,7 @@ Collision Sphere::intersect(Ray ray){
 	float under_sqrt = ( (l*(o-c)) * (l*(o-c)) ) - ((o-c)*(o-c) - r*r);
 
 	Collision result;
-	result.normal = Vec3(0,0,0);
+	result.normal = -1.0*l;
 
 	if (under_sqrt < 0){ //Then there is no intersection
 		result.distance = std::numeric_limits<float>::infinity();
@@ -36,7 +36,9 @@ Collision Sphere::intersect(Ray ray){
 		float intersection1 = tmp + sqrt(under_sqrt);
 		float intersection2 = tmp - sqrt(under_sqrt);
 		
-		result.distance = fmin(intersection1,intersection2);
+		result.distance     = fmin(intersection1,intersection2);
+		Vec3 intersectPoint = (o+(l*result.distance));
+		result.normal       = (c-intersectPoint).norm();
 	}
 
 	return result;
