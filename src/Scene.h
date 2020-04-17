@@ -21,12 +21,11 @@ public:
 	SceneCollision intersect(Ray ray);
 	void render(const char* path);
 	void print();
-	Ray* rays;
 private:
 	int         noPrimitives;
 	Primitive** primitives;
 	Plot        plot;
-	//Ray*		rays;
+	Ray*		rays;
 	
 	float horizontalFOVradians;
 	float   verticalFOVradians;

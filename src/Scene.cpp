@@ -47,7 +47,7 @@ void Scene::setRays(Vec3 org, Vec3 dir){
 		for(int j=0; j<width; j++){
 
 			float x = -5.0 + (10.0/float(width ))*j;
-			float y = -2.5 + (5.0 /float(height))*i;
+			float y =  2.5 - (5.0 /float(height))*i;
 
 			unsigned int idx = i*width+j;
 			Vec3 dir2;
@@ -97,7 +97,7 @@ void Scene::render(const char* path){
 			SceneCollision col = this->intersect(ray);
 
 			float intensity = col.normal * ray.getDir().norm();
-			plot.plot(j,i,intensity*255,0,0);
+			plot.plot(j,i,intensity,0,0);
 		}
 	}
 	plot.save(path);

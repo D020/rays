@@ -1,0 +1,95 @@
+@startuml
+Vec3                <-- Ray       : contains
+Collision           <-- Primitive : uses
+Vec3                <-- Primitive : contains
+Sphere              --> Primitive : inherits
+Plane               --> Primitive : inherits
+SceneCollision      <-- Scene     : uses
+Primitive    "many" <-- Scene     : contains
+Ray          "many" <-- Scene     : contains
+Plot                <-- Scene       : contains
+
+class Vec3 {
+    + length()
+    + norm()
+	+ operator + (Vec3,Vec3)
+	+ operator - (Vec3,Vec3)
+	+ operator * (float,Vec3)
+	+ operator * (Vec3,float)
+  __ private __
+    - float x,y,z
+}
+
+class Ray {
+  .. Getters ..
+  + getOrg()
+  + getDir()
+  __ private __
+  - Vec3 org;
+  - Vec3 dir;
+}
+
+class Primitive {
+  + Collision intersect(Ray)
+  .. Getters ..
+  + getOrg()
+  __ private __
+  - Vec3 org;
+}
+
+class Sphere {
+  + Collision intersect(Ray)
+  .. Getters ..
+  + getOrg()
+  __ private __
+  - Vec3 org;
+  - float radius
+}
+
+class Plane {
+  + Collision intersect(Ray)
+  .. Getters ..
+  + getOrg()
+  + getNorm()
+  __ private __
+  - Vec3 org;
+  - Vec3 norm;
+}
+
+class Scene {
+  + void addPrimitive(Primitive*)
+  + void setRays(Vec3, Vec3)
+  + SceneCollision intersect(Ray)
+  + void render(const char*)
+  __ private __
+  - int noPrimitives
+  - Primitive** primitives
+  - Plot plot
+  - Ray* rays
+  - float horizontalFOVradians;
+  - float verticalFOVradians;
+}
+
+class Plot{
+  + getWidth();
+  + getHeight();
+
+  + void save(const char*);
+  + void plot(int, int, float, float, float);
+
+  + int width, height;
+  + float* buf;
+
+}
+
+class Collision << (S,orchid) >> {
+  + Vec3 normal
+  + float distance
+}
+
+class SceneCollision << (S,orchid) >> {
+  + Vec3 normal
+  + float distance
+  + int hitIndex
+}
+@enduml

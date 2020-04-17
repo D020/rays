@@ -10,10 +10,10 @@ class Plot {
 	int getHeight();
 
 	void save(const char* path);
-	void plot(int x, int y, int r, int g, int b);
+	void plot(int x, int y, float r, float g, float b);
 
 	int width, height;
-	unsigned char* buf;
+	float* buf;
 };
 
 #endif

@@ -1,36 +1,24 @@
-CC := g++
-CFLAGS := -Wall -g
-TARGET := main
+GCC = g++
+#GCC = gcc
+#ALL_SOURCES = $(shell find . -name '*.c') # all .c files in this dir or any subdirs
+#PROG_SOURCES = $(filter-out test%, $(ALL_SOURCES))
+#PROG_SOURCES = $(filter-out $(wildcard *test*), $(ALL_SOURCES))
 
-rt = $(shell pwd)
+SOURCES = $(shell find . -type f -name '*.cpp' -a ! -name '*test*')
+
+OBJS := $(patsubst %.c,%.o,$(SOURCES))
+CFLAGS = -g -Wall
+
+LIBS := pthread
+LIBS := $(addprefix -l,$(LIBS))
 
 all: main
 
-main: main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o $(rt)/src/Primitive.o $(rt)/src/Sphere.o $(rt)/src/Scene.o
-	g++ -o main main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o $(rt)/src/Primitive.o $(rt)/src/Sphere.o $(rt)/src/Scene.o
+%.o: %.c
+	$(GCC) $(CFLAGS) -c -o $@ $<
 
-main.o:
-	g++ -c main.cpp
-
-/src/Vec3.o:
-	g++ -c $(rt)/src/Vec3.cpp
-
-/src/Plot.o:
-	g++ -c $(rt)/src/Plot.cpp
-
-/src/Ray.o:
-	g++ -c $(rt)/src/Ray.cpp
-
-/src/Primitive.o:
-	g++ -c $(rt)/src/Primitive.cpp
-
-/src/Sphere.o:
-	g++ -c $(rt)/src/Sphere.cpp
-
-/src/Scene.o:
-	g++ -c $(rt)/src/Scene.cpp
+main: $(OBJS)
+	$(GCC) $(OBJS) $(LIBS) $(CFLAGS) -o main
 
 clean:
-	rm -rf main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o $(rt)/src/Primitive.o $(rt)/src/Sphere.o $(rt)/src/Sphere.o $(rt)/src/Scene.o main  
-	
-.PHONY: all clean
+	rm -rf main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o $(rt)/src/Primitive.o $(rt)/src/Sphere.o $(rt)/src/Sphere.o $(rt)/src/Scene.o main
