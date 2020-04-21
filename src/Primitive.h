@@ -12,6 +12,7 @@ struct Collision {
 class Primitive {
 
 friend class Sphere;
+friend class Plane;
 
 public:
 	Primitive();

@@ -9,7 +9,7 @@ public:
 	virtual Collision intersect(Ray ray);
 	virtual void print();
 private:
-	float radius;
+	Vec3 norm;
 };
 
 #endif

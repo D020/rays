@@ -22,6 +22,18 @@ Vec3& Vec3::operator = (const Vec3 &other){
 	return *this;
 }
 
+float Vec3::getX(){	
+	return this->x;
+}
+
+float Vec3::getY(){	
+	return this->y;
+}
+
+float Vec3::getZ(){	
+	return this->z;
+}
+
 void Vec3::print(bool verbose){
 	printf("x, y, z = %f, %f, %f\n", x, y, z);
 	if(verbose){
@@ -35,7 +47,11 @@ float Vec3::length(){
 
 Vec3 Vec3::norm(){
 	float len = this->length();
-	Vec3 res(x/len,y/len,z/len);
+	Vec3 res;
+	if(len!=0)
+		res = Vec3(x/len,y/len,z/len);
+	else
+		res = Vec3(0,0,0);
 	return res;
 }
 
@@ -77,4 +93,12 @@ Vec3 operator * (float scalar, const Vec3 &a) {
 	res.y = a.y * scalar;
 	res.z = a.z * scalar;
 	return res;
+} 
+
+Vec3 operator % (const Vec3 &a, const Vec3 &b) { 
+	Vec3 res;
+	res.x = a.y*b.z - a.z*b.y;
+	res.y = a.z*b.x - a.x*b.z;
+	res.z = a.x*b.y - a.y*b.x;
+	return res; 
 } 

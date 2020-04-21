@@ -73,3 +73,32 @@ TO DO (Not ordered):
 	6: Multithreading
 
 	7: Animation
+
+2020 April 21st
+
+Implemented some functionality for Quats, added planes and did some primitive animation.
+
+![Alt text](ani.gif?raw=true "Primitive animation")
+
+Fixed distance has to be positive. Otherwise collision happens behind viewpoint.
+Fixed normalizing Vectors or Quats (when they are 0).
+
+TO DO:
+
+	1: Write proper color handling
+
+	2: Write recursive raytrace
+
+	3: Add point lights
+
+	4: Add rectangle lights
+
+	5: Add shadows
+
+	6: Add primitive type triangle
+
+	7: Multithreading
+
+	8: Animation
+
+

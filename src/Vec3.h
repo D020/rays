@@ -12,6 +12,11 @@ public:
 	Vec3& operator = (const Vec3 &other);
 	void print(bool verbose);
 
+	//Getters
+	float getX();
+	float getY();
+	float getZ();
+
 	//Arithmetics
 	float length();
 	Vec3 norm();
@@ -21,6 +26,7 @@ public:
 	friend float operator * (const Vec3 &a, const Vec3 &b);
 	friend Vec3  operator * (const Vec3 &a, float scalar);
 	friend Vec3  operator * (float scalar, const Vec3 &a);
+	friend Vec3  operator % (const Vec3 &a, const Vec3 &b);
 
 private:
 	float x,y,z;
