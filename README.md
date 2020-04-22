@@ -103,7 +103,7 @@ TO DO:
 
 2020 April 22nd
 
-Tested recursive (turned into a queue) raytracing. Things are in needing of refactoring.
+Tested recursive (turned into a queue) raytracing. Things are in need of refactoring.
 Especially Scene.cpp and everything to do with rays, colors, materials and collisions.
 Documentation UML needs to be updated as well and used to plan any further steps.
 
