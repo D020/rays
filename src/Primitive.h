@@ -19,11 +19,15 @@ public:
 	Primitive(Vec3 org);
 	virtual void print();
 	Vec3 getOrg();
+	Vec3 getColor();
+	float getSpecular();
 
 	virtual Collision intersect(Ray ray);
 
 private:
 	Vec3 org;
+	Vec3 color;
+	float specular;
 };
 
 #endif

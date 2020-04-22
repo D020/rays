@@ -8,6 +8,7 @@
 
 struct SceneCollision {
     Vec3 normal;	//Normal to the point that was hit.
+	Vec3 position;  //Position in the scene where Ray ended.
     float distance; 
 	int hitIndex;	//Index into primitives indicating which object was hit first.
 };
@@ -18,7 +19,7 @@ public:
 	Scene(int width, int height);
 	void addPrimitive(Primitive* prim);
 	void setRays(Vec3 org, Vec3 dir);
-	SceneCollision intersect(Ray ray);
+	SceneCollision intersect(Ray ray, int ignore);
 	void render(const char* path);
 	void print();
 private:

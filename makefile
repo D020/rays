@@ -21,4 +21,6 @@ main: $(OBJS)
 	$(GCC) $(OBJS) $(LIBS) $(CFLAGS) -o main
 
 clean:
-	rm -rf main.o $(rt)/src/Vec3.o $(rt)/src/Plot.o $(rt)/src/Ray.o $(rt)/src/Primitive.o $(rt)/src/Sphere.o $(rt)/src/Sphere.o $(rt)/src/Scene.o main
+	find . -name "*.o" -type f -delete
+	find . -name "*.ppm" -type f -delete
+	rm -rf main

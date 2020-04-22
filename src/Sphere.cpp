@@ -12,7 +12,7 @@ Collision Sphere::intersect(Ray ray){
 
 	//Wiki Line-Sphere intersection
 
-	float d; 	//Distance
+	//float d; 	//Distance
 	Vec3  l; 	//Direction of line (unit vector)
 	Vec3  o; 	//Origin of line;
 	Vec3  c; 	//Origin of sphere;

@@ -101,4 +101,23 @@ TO DO:
 
 	8: Animation
 
+2020 April 22nd
+
+Tested recursive (turned into a queue) raytracing. Things are in needing of refactoring.
+Especially Scene.cpp and everything to do with rays, colors, materials and collisions.
+Documentation UML needs to be updated as well and used to plan any further steps.
+
+![Alt text](ani_refl.gif?raw=true "Primitive animation")
+
+TO DO:
+
+	1: Write proper color handling
+
+	2: Add rectangle lights
+
+	3: Add shadows
+
+	4: Add primitive type triangle
+
+	5: Multithreading
 

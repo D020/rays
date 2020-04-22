@@ -30,7 +30,7 @@ int main() {
 
 	Scene testscene(534,300);
 	testscene.addPrimitive(&ball1);
-	testscene.addPrimitive(&ball2);
+	//testscene.addPrimitive(&ball2);
 	testscene.addPrimitive(&wall1);
 	testscene.addPrimitive(&wall2);
 	testscene.addPrimitive(&wall3);
@@ -41,7 +41,7 @@ int main() {
 
 	int idx = 0;
 	char str[10];
-	for(float y=4;-4<y;y-=0.1){
+	for(float y=4;0<y;y-=0.1){
 		testscene.setRays(Vec3(y,y,-10),Vec3(0,0.1,-1));
 				
 		sprintf(str,"%02d.ppm",idx);
@@ -49,6 +49,13 @@ int main() {
 		testscene.render(str);
 		idx++;
 	}
+	for(float y=0;y<4;y+=0.1){
+		testscene.setRays(Vec3(y,y,-10),Vec3(0,0.1,-1));
+				
+		sprintf(str,"%02d.ppm",idx);
 
+		testscene.render(str);
+		idx++;
+	}
     return 0;
 }

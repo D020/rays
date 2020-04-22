@@ -69,7 +69,7 @@ void Plot::save(const char* path){
 	printf("hdr_min %f\n",hdr_min);
 	printf("hdr_max %f\n",hdr_max);
 
-	float scalar = (255/(hdr_max-hdr_min));
+	//float scalar = (255/(hdr_max-hdr_min));
 
 	float a = 0;
 	float b = 1.0;
