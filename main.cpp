@@ -20,17 +20,35 @@ int main() {
 
 	printf("\n\n\n\n\n");
 
-	Sphere ball1(Vec3(0 ,0,0),2);
+	Sphere ball1(Vec3(0 ,0,0),2);	
+	ball1.setColor(Vec3(0,0,1.0));
+	ball1.setSpecular(0.1);	
+
 	Sphere ball2(Vec3(3 ,1,0),2.5);
+	ball2.setColor(Vec3(1.0,0,0));
+	ball2.setSpecular(0.70);
+
+	Sphere ball3(Vec3(0,-1,-3),1.5);
+	ball3.setColor(Vec3(1.0,1.0,1.0));
+	ball3.setSpecular(1.00);
+
 	Plane  wall1(Vec3(0 ,0,5),Vec3(0 ,0,-1));
 	Plane  wall2(Vec3(-5,0,0),Vec3(1 ,0, 0));
 	Plane  wall3(Vec3(5 ,0,0),Vec3(-1,0, 0));
 	Plane  wall4(Vec3(0 ,5,0),Vec3(0 ,-1, 0));
 	Plane  wall5(Vec3(0 ,-5,0),Vec3(0,1, 0));
 
-	Scene testscene(534,300);
+	wall1.setColor(Vec3(1,0,0));
+	wall2.setColor(Vec3(0,1,0));
+	wall3.setColor(Vec3(0,0,1));
+	wall4.setColor(Vec3(1,1,0));
+	wall5.setColor(Vec3(0,1,1));
+
+	//Scene testscene(534/3,300/3);
+	Scene testscene(1280,720);
 	testscene.addPrimitive(&ball1);
-	//testscene.addPrimitive(&ball2);
+	testscene.addPrimitive(&ball2);
+	testscene.addPrimitive(&ball3);
 	testscene.addPrimitive(&wall1);
 	testscene.addPrimitive(&wall2);
 	testscene.addPrimitive(&wall3);
@@ -47,6 +65,9 @@ int main() {
 		sprintf(str,"%02d.ppm",idx);
 
 		testscene.render(str);
+
+		return 0;
+
 		idx++;
 	}
 	for(float y=0;y<4;y+=0.1){

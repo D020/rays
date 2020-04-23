@@ -20,7 +20,9 @@ public:
 	virtual void print();
 	Vec3 getOrg();
 	Vec3 getColor();
+	void setColor(Vec3 color);
 	float getSpecular();
+	void setSpecular(float specular);
 
 	virtual Collision intersect(Ray ray);
 

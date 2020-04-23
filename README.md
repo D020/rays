@@ -4,6 +4,7 @@ Multithreaded Raytracer
 
 Inspired by
 https://www.flipcode.com/archives/Raytracing_Topics_Techniques-Part_1_Introduction.shtml
+But mostly made up on the go from snippets around the internet.
 
 
 2020 April 13th 
@@ -120,4 +121,27 @@ TO DO:
 	4: Add primitive type triangle
 
 	5: Multithreading
+
+2020 April 23rd
+
+Some freestyled color handling was implemented.
+Random packets of rays implemented.
+Documentation still needs to be updated.
+Below is an example (scaled down hi-res render) artifacts are clearly visible.
+
+![Alt text](supersampled.png?raw=true "Primitive animation")
+
+Different amounts of specularity results in different scattering of rays and preservation of color.
+This gives objects some kind of "texture" or roughness. We are reaching the limits of ray tracing however.
+Pathtracing or cone/beam tracing would be fun to explore.
+
+TO DO:
+
+	1: Add rectangle lights (somewhat initiated with random packets)
+
+	2: Add shadows
+
+	3: Add primitive type triangle
+
+	4: Multithreading
 

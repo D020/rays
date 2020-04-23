@@ -128,6 +128,77 @@ SceneCollision Scene::intersect(Ray ray, int ignore){
 	return scCol;
 }
 
+vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
+	vector<SceneCollision> cols;
+	vector<Ray> newRays;
+	
+	Vec3 light(0,0,-5);
+	float lightPower = 200;
+
+	for(unsigned int rdx=0; rdx<rays.size(); rdx++){
+		Ray ray_tmp = rays[rdx];
+
+		//Dirty self-collide hack
+		Ray ray(ray_tmp.getOrg()+ray_tmp.getDir()*0.001,ray_tmp.getDir(),ray_tmp.getColor(),ray_tmp.getPropColor());
+
+		SceneCollision col = this->intersect(ray, -1);
+		
+		if(col.hitIndex<0)
+			return newRays;
+
+		//https://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector
+		Vec3 n = col.normal.norm();
+		Vec3 d = ray.getDir().norm();
+		Vec3 r = d - 2*(d*n)*n;
+
+
+		//Regular color intrinsic to the object
+		Vec3 toLight = light - col.position;
+		float intensity = lightPower * (-1*toLight.norm()*n)/(toLight.length()*toLight.length());
+		Vec3 color;
+		color = intensity * primitives[col.hitIndex]->getColor();
+
+		//Reflected color based on specularity that controls
+		//how fussy or sharp the cone of reflected rays are
+		float specular = primitives[col.hitIndex]->getSpecular();
+
+		//Set up new reflected rays
+
+		//First lets just try with completely random new rays
+
+		for(int ndx=0; ndx<5; ndx++){
+
+			Vec3 dir;
+			do{
+			float theta = 0  + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI-0)));
+			float z     = -1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1-(-1))));
+
+			dir = Vec3(sqrt(1-z*z)*cos(theta),sqrt(1-z*z)*sin(theta),z);
+
+			}while(dir*r<0.01);
+			dir = (1-specular)*(dir*0.5) + specular*(r*0.5);
+			dir.norm();
+
+			//printf("theta %f, z %f\n",theta,z);
+
+			//ray = Ray(col.position,r,
+			//		  color*ray.getPropColor() + ray.getColor()*(1-ray.getPropColor()),
+            //          specular);
+
+			ray = Ray(col.position,dir,
+					  color*ray.getPropColor() + ray.getColor()*(1-ray.getPropColor()),
+                      specular);
+		
+			//ignoreIndex = col.hitIndex;
+
+			newRays.push_back(ray);
+		}
+	}
+	
+
+	return newRays;	
+}
+
 void Scene::render(const char* path){
 	int height = plot.getHeight();
 	int width  = plot.getWidth();
@@ -136,64 +207,25 @@ void Scene::render(const char* path){
 		for(int j=0; j<width; j++){
 
 			unsigned int idx = i*width+j;
-			Ray ray = rays[idx];
+			Ray rayIn = rays[idx];
 
-			int bounces = 2;
+			vector<Ray> raysIn;
+			raysIn.push_back(rayIn);
 
-			float intensity[10];
-			float specular [10];
-			Vec3  color    [10];
-			float rs[10];
-			float gs[10];
-			float bs[10];
-			int ignoreIndex = -1;
-
-			for(int rdx=0; rdx<bounces; rdx++){
-				SceneCollision col = this->intersect(ray, ignoreIndex);
-
-				//https://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector
-
-				Vec3 n = col.normal.norm();
-				Vec3 d = ray.getDir().norm();
-				Vec3 r = d - 2*(d*n)*n;
-
-				Vec3 toLight = light - col.position;
-
-				intensity[rdx] = toLight.norm()*r;
-
-				Vec3 color;
-				color = primitives[col.hitIndex]->getColor();
-		
-				rs[rdx]       = color.getX();
-				gs[rdx]       = color.getY();
-				bs[rdx]       = color.getZ();
-				specular[rdx] = primitives[col.hitIndex]->getSpecular();
-
-				//Set up new reflected ray
-				ray = Ray(col.position,r);
-				ignoreIndex = col.hitIndex;
+			for(int bdx=0; bdx<3; bdx++){
+				raysIn = SceneTraceBundle(raysIn);
 			}
 
-			float final_r = 0;
-			float final_g = 0;
-			float final_b = 0;
-
-			final_r += rs[0]*intensity[0];
-			final_g += gs[0]*intensity[0];
-			final_b += bs[0]*intensity[0];			
-
-			for(int rdx=1; rdx<bounces; rdx++){
-				final_r += rs[rdx]*intensity[rdx]*specular[rdx-1];
-				final_g += gs[rdx]*intensity[rdx]*specular[rdx-1];
-				final_b += bs[rdx]*intensity[rdx]*specular[rdx-1];
-			}
+			Vec3 finalRayColor(0,0,0);
+			int noRays = raysIn.size();
+			for(int ndx=0;ndx<noRays;ndx++)
+				finalRayColor = finalRayColor + raysIn[ndx].getColor();
 			
-			//final_r/=bounces;
-			//final_g/=bounces;
-			//final_b/=bounces;
+			finalRayColor = finalRayColor * (1/float(noRays));
 
-			plot.plot(j,i,final_r,final_g,final_b);
+			plot.plot(j,i,finalRayColor.getX(),finalRayColor.getY(),finalRayColor.getZ());
 		}
+		printf("%i/%i\n",i,height);
 	}
 	plot.save(path);
 }

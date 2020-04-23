@@ -72,15 +72,15 @@ void Plot::save(const char* path){
 	//float scalar = (255/(hdr_max-hdr_min));
 
 	float a = 0;
-	float b = 1.0;
+	float b = 8.0;
 
 	for (int i=0; i<height; i++){
 		for (int j=0; j<width; j++){
 			static unsigned char color[3];
 			unsigned int index = (i*width + j)*3;
-			color[0] = clamp(buf[index  ],a,b)*255;
-			color[1] = clamp(buf[index+1],a,b)*255;
-			color[2] = clamp(buf[index+2],a,b)*255;
+			color[0] = clamp(buf[index  ],a,b)/(b+0.01)*255;
+			color[1] = clamp(buf[index+1],a,b)/(b+0.01)*255;
+			color[2] = clamp(buf[index+2],a,b)/(b+0.01)*255;
 			fwrite(color,1,3,fp);
 		}
 	}
