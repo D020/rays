@@ -1,6 +1,9 @@
-#Raytracing
+# Raytracing
+
 Results so far (April 23rd):
+
 ![Alt text](title.png?raw=true "Rays everywhere!")
+
 Animations further down
 
 
