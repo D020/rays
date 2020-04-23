@@ -28,7 +28,7 @@ int main() {
 	ball2.setColor(Vec3(1.0,0,0));
 	ball2.setSpecular(0.70);
 
-	Sphere ball3(Vec3(0,-1,-3),1.5);
+	Sphere ball3(Vec3(-3,-2,0),1.5);
 	ball3.setColor(Vec3(1.0,1.0,1.0));
 	ball3.setSpecular(1.00);
 
@@ -66,10 +66,9 @@ int main() {
 
 		testscene.render(str);
 
-		return 0;
-
 		idx++;
 	}
+	/*
 	for(float y=0;y<4;y+=0.1){
 		testscene.setRays(Vec3(y,y,-10),Vec3(0,0.1,-1));
 				
@@ -78,5 +77,6 @@ int main() {
 		testscene.render(str);
 		idx++;
 	}
+	*/
     return 0;
 }

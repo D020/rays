@@ -129,7 +129,9 @@ Random packets of rays implemented.
 Documentation still needs to be updated.
 Below is an example (scaled down hi-res render) artifacts are clearly visible.
 
-![Alt text](supersampled.png?raw=true "Primitive animation")
+![Alt text](supersampled.png?raw=true "4k downsized")
+
+![Alt text](ani_super.gif?raw=true "1280 downsized animation")
 
 Different amounts of specularity results in different scattering of rays and preservation of color.
 This gives objects some kind of "texture" or roughness. We are reaching the limits of ray tracing however.
