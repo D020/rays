@@ -1,3 +1,9 @@
+#Raytracing
+Results so far (April 23rd):
+![Alt text](title.png?raw=true "Rays everywhere!")
+Animations further down
+
+
 2020 April 12th
 
 Multithreaded Raytracer
