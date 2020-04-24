@@ -133,6 +133,7 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 	vector<Ray> newRays;
 	
 	Vec3 light(0,0,-5);
+	//Vec3 light(0,3,0);
 	float lightPower = 200;
 
 	for(unsigned int rdx=0; rdx<rays.size(); rdx++){
@@ -146,26 +147,32 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 		if(col.hitIndex<0)
 			return newRays;
 
+		//Calculate the reflected vector r based on normal of the surface n and the incoming vector d.
 		//https://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector
 		Vec3 n = col.normal.norm();
 		Vec3 d = ray.getDir().norm();
 		Vec3 r = d - 2*(d*n)*n;
 
 
-		//Regular color intrinsic to the object
+		//Is this point in the shadow of another object?
 		Vec3 toLight = light - col.position;
-		float intensity = lightPower * (-1*toLight.norm()*n)/(toLight.length()*toLight.length());
+		Ray shadeRay(col.position + toLight.norm()*0.001,toLight.norm());
+		SceneCollision shadeCol = this->intersect(shadeRay,-1);
+		float intensity;
+		if(shadeCol.distance<toLight.length())
+			intensity = 0;
+		else
+			intensity = lightPower * (-1*toLight.norm()*n)/(toLight.length()*toLight.length());
+		//Otherwise it's given a color with intensity according to the dot product scaled by distance to the light.
 		Vec3 color;
 		color = intensity * primitives[col.hitIndex]->getColor();
+
 
 		//Reflected color based on specularity that controls
 		//how fussy or sharp the cone of reflected rays are
 		float specular = primitives[col.hitIndex]->getSpecular();
 
 		//Set up new reflected rays
-
-		//First lets just try with completely random new rays
-
 		for(int ndx=0; ndx<5; ndx++){
 
 			Vec3 dir;
@@ -178,12 +185,6 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 			}while(dir*r<0.01);
 			dir = (1-specular)*(dir*0.5) + specular*(r*0.5);
 			dir.norm();
-
-			//printf("theta %f, z %f\n",theta,z);
-
-			//ray = Ray(col.position,r,
-			//		  color*ray.getPropColor() + ray.getColor()*(1-ray.getPropColor()),
-            //          specular);
 
 			ray = Ray(col.position,dir,
 					  color*ray.getPropColor() + ray.getColor()*(1-ray.getPropColor()),

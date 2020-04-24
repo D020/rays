@@ -44,8 +44,8 @@ int main() {
 	wall4.setColor(Vec3(1,1,0));
 	wall5.setColor(Vec3(0,1,1));
 
-	//Scene testscene(534/3,300/3);
-	Scene testscene(1280,720);
+	Scene testscene(534,300);
+	//Scene testscene(1280,720);
 	testscene.addPrimitive(&ball1);
 	testscene.addPrimitive(&ball2);
 	testscene.addPrimitive(&ball3);
