@@ -156,3 +156,17 @@ TO DO:
 
 	4: Multithreading
 
+
+2020 April 24th
+
+Shadows added. Some kind of attempt at multithreading implemented with disappointing results in terms of peformance gains.
+
+![Alt text](ani_shadows.gif?raw=true "Shadows")
+
+TO DO:
+
+	1: Add rectangle lights (somewhat initiated with random packets)
+
+	2: Add primitive type triangle
+
+	3: Multithreading (Fix)

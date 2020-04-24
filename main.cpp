@@ -12,6 +12,7 @@
 #include "src/Scene.h"
 #include <math.h>
 #include <algorithm>
+#include <thread>
 using namespace std;
 
 
@@ -22,7 +23,7 @@ int main() {
 
 	Sphere ball1(Vec3(0 ,0,0),2);	
 	ball1.setColor(Vec3(0,0,1.0));
-	ball1.setSpecular(0.1);	
+	ball1.setSpecular(0.0);	
 
 	Sphere ball2(Vec3(3 ,1,0),2.5);
 	ball2.setColor(Vec3(1.0,0,0));
@@ -44,8 +45,8 @@ int main() {
 	wall4.setColor(Vec3(1,1,0));
 	wall5.setColor(Vec3(0,1,1));
 
-	Scene testscene(534,300);
-	//Scene testscene(1280,720);
+	//Scene testscene(534,300);
+	Scene testscene(1280,720);
 	testscene.addPrimitive(&ball1);
 	testscene.addPrimitive(&ball2);
 	testscene.addPrimitive(&ball3);
@@ -59,12 +60,14 @@ int main() {
 
 	int idx = 0;
 	char str[10];
-	for(float y=4;0<y;y-=0.1){
-		testscene.setRays(Vec3(y,y,-10),Vec3(0,0.1,-1));
-				
+	testscene.setRays(Vec3(0,0,-10),Vec3(0,0.1,-1));
+	for(float y=4;0<y;y-=0.5){
+		//testscene.setRays(Vec3(y,y,-10),Vec3(0,0.1,-1));
+		testscene.setLight(Vec3(y,y,-5));
 		sprintf(str,"%02d.ppm",idx);
 
-		testscene.render(str);
+		testscene.render(2);
+		testscene.save(str);
 
 		idx++;
 	}

@@ -6,6 +6,7 @@
 #include <math.h>
 #include <algorithm>
 #include <limits>
+#include <thread>
 Scene::Scene(){
 	noPrimitives         = 0;
 	primitives           = 0;
@@ -99,6 +100,10 @@ void Scene::setRays(Vec3 org, Vec3 dir){
 
 }
 
+void Scene::setLight(Vec3 light){
+	this->light = light;
+}
+
 SceneCollision Scene::intersect(Ray ray, int ignore){
 
 	Collision colMin;
@@ -132,7 +137,7 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 	vector<SceneCollision> cols;
 	vector<Ray> newRays;
 	
-	Vec3 light(0,0,-5);
+	//Vec3 light(0,0,-5);
 	//Vec3 light(0,3,0);
 	float lightPower = 200;
 
@@ -200,11 +205,31 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 	return newRays;	
 }
 
-void Scene::render(const char* path){
+void Scene::render(int cores){
 	int height = plot.getHeight();
+
+	vector<thread> pss;
+
+	int interval = height/cores;
+
+	for(int cdx=0; cdx<cores;cdx++){
+		thread ps(&Scene::renderPart, this, floor(interval*cdx), floor(interval*(cdx+1)));
+		int from = interval*cdx;
+		int to   = interval*(cdx+1);
+		
+		//pss.emplace_back([&]{renderPart(from,to);});
+		pss.push_back(move(ps));
+		printf("From %i, To %i\n",from,to);
+	}
+	for(int cdx=0; cdx<cores;cdx++){
+		pss[cdx].join();
+	}
+
+}
+
+void Scene::renderPart(int ya, int yb){
 	int width  = plot.getWidth();
-	Vec3 light(-4,-4,4);
-	for(int i=0; i<height; i++){
+	for(int i=ya; i<yb; i++){
 		for(int j=0; j<width; j++){
 
 			unsigned int idx = i*width+j;
@@ -226,8 +251,12 @@ void Scene::render(const char* path){
 
 			plot.plot(j,i,finalRayColor.getX(),finalRayColor.getY(),finalRayColor.getZ());
 		}
-		printf("%i/%i\n",i,height);
+		if(ya==0)
+			printf("%i/%i\n",i,yb);
 	}
+}
+
+void Scene::save(const char* path){
 	plot.save(path);
 }
 
