@@ -4,14 +4,14 @@
 Ray::Ray(){
 	org = Vec3(0,0,0);
 	dir = Vec3(0,0,0);
-	color = Vec3(1,1,1);
+	color = Vec3(0,0,0);
 	propColor = 1.0;
 }
 
 Ray::Ray(Vec3 org, Vec3 dir){
 	this->org = org;
 	this->dir = dir;
-	this->color = Vec3(1,1,1);
+	this->color = Vec3(0,0,0);
 	this->propColor = 1.0;
 }
 

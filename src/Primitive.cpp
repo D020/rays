@@ -5,6 +5,7 @@ Primitive::Primitive(){
 	org = Vec3(0,0,0);
 	color = Vec3(1.0,1.0,0.0);
 	specular = 0.0;
+	roughness = 0.0;
 }
 
 Primitive::Primitive(Vec3 org){
@@ -42,3 +43,12 @@ float Primitive::getSpecular(){
 void Primitive::setSpecular(float specular){
 	this->specular = specular;
 }
+
+float Primitive::getRoughness(){
+	return this->roughness;
+}
+
+void Primitive::setRoughness(float roughness){
+	this->roughness = roughness;
+}
+

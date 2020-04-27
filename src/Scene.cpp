@@ -7,20 +7,28 @@
 #include <algorithm>
 #include <limits>
 #include <thread>
+
+#define PRNG_RAND_MAX  0xFFFFFFFF
+#define PRNG_RAND_MAXX 0x7FFFFFFF
+int32_t Scene::prng(int32_t seed){
+	seed = (seed * 1103515245 + 12345);
+	return seed;
+}
+
 Scene::Scene(){
 	noPrimitives         = 0;
 	primitives           = 0;
-	rays		         = 0;
-	plot 		         = Plot();
 	horizontalFOVradians = 0;
 	  verticalFOVradians = 0;
+	rd.state = 0;
+	initstate_r(0, state, sizeof(state), &rd);
 }
 
 Scene::Scene(int width, int height){
 	noPrimitives = 0;
 	primitives   = 0;
-	plot 		 = Plot(width, height);
-	rays 		 = (Ray*) calloc(width*height,sizeof(Ray));
+	rd.state     = 0;
+	initstate_r(0, state, sizeof(state), &rd);
 }
 
 void Scene::addPrimitive(Primitive* prim){
@@ -51,9 +59,11 @@ void Scene::addPrimitive(Primitive* prim){
 // 5. Apply to all rays
 
 //https://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another
-void Scene::setRays(Vec3 org, Vec3 dir){
-	int height = plot.getHeight();
-	int width  = plot.getWidth();
+void Scene::setRays(Vec3 org, Vec3 dir, Plot* plot){
+	int height = plot->getHeight();
+	int width  = plot->getWidth();
+
+	rays.resize(height*width);
 
 	Vec3 centerRay(0,0,org.getZ()+8);
 
@@ -80,6 +90,7 @@ void Scene::setRays(Vec3 org, Vec3 dir){
 
 	R = R.norm();
 	Quat Rc = R.conj();
+
 
 	for(int i=0; i<height; i++){
 		for(int j=0; j<width; j++){
@@ -137,8 +148,6 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 	vector<SceneCollision> cols;
 	vector<Ray> newRays;
 	
-	//Vec3 light(0,0,-5);
-	//Vec3 light(0,3,0);
 	float lightPower = 200;
 
 	for(unsigned int rdx=0; rdx<rays.size(); rdx++){
@@ -175,20 +184,36 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 
 		//Reflected color based on specularity that controls
 		//how fussy or sharp the cone of reflected rays are
-		float specular = primitives[col.hitIndex]->getSpecular();
+		float specular  = primitives[col.hitIndex]->getSpecular();
+		float roughness = primitives[col.hitIndex]->getRoughness();
 
 		//Set up new reflected rays
 		for(int ndx=0; ndx<5; ndx++){
 
 			Vec3 dir;
 			do{
-			float theta = 0  + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI-0)));
-			float z     = -1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1-(-1))));
+			//float theta = 0  + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI-0)));
+			//float z     = -1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1-(-1))));
+
+			/*
+			random_r(&rd, &random);
+			float theta = 0  + static_cast <float> (random) /( static_cast <float> (RAND_MAX/(2*M_PI-0)));
+			random_r(&rd, &random);
+			float z     = -1 + static_cast <float> (random) /( static_cast <float> (RAND_MAX/(1-(-1))));
+			*/
+
+			random = prng(random);
+			float theta = ((float(random)/float(PRNG_RAND_MAXX))+1)*M_PI;
+			random = prng(random);
+			float z     = (float(random)/float(PRNG_RAND_MAXX));
+
+			//printf("theta %f z %f\n",theta,z);
 
 			dir = Vec3(sqrt(1-z*z)*cos(theta),sqrt(1-z*z)*sin(theta),z);
 
-			}while(dir*r<0.01);
-			dir = (1-specular)*(dir*0.5) + specular*(r*0.5);
+			}while(dir*r<0.01 || dir*r < (roughness-0.05));
+
+			dir = (1-roughness)*(dir*0.5) + roughness*(r*0.5);
 			dir.norm();
 
 			ray = Ray(col.position,dir,
@@ -205,15 +230,28 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 	return newRays;	
 }
 
-void Scene::render(int cores){
-	int height = plot.getHeight();
+/*
+void Scene::render(int cores, Plot* plot){
+	
+	int height = plot->getHeight();
+
+    std::thread t1(&Scene::renderPart, this,  0,       height/2, plot);
+    std::thread t2(&Scene::renderPart, this, height/2, height,   plot);
+    t1.join();
+    t2.join();
+}
+*/
+
+
+void Scene::render(int cores, Plot* plot){
+	int height = plot->getHeight();
 
 	vector<thread> pss;
 
 	int interval = height/cores;
 
 	for(int cdx=0; cdx<cores;cdx++){
-		thread ps(&Scene::renderPart, this, floor(interval*cdx), floor(interval*(cdx+1)));
+		thread ps(&Scene::renderPart, this, floor(interval*cdx), floor(interval*(cdx+1)), plot);
 		int from = interval*cdx;
 		int to   = interval*(cdx+1);
 		
@@ -227,8 +265,8 @@ void Scene::render(int cores){
 
 }
 
-void Scene::renderPart(int ya, int yb){
-	int width  = plot.getWidth();
+void Scene::renderPart(int ya, int yb, Plot* plot){
+	int width  = plot->getWidth();
 	for(int i=ya; i<yb; i++){
 		for(int j=0; j<width; j++){
 
@@ -249,15 +287,11 @@ void Scene::renderPart(int ya, int yb){
 			
 			finalRayColor = finalRayColor * (1/float(noRays));
 
-			plot.plot(j,i,finalRayColor.getX(),finalRayColor.getY(),finalRayColor.getZ());
+			plot->plot(j,i,finalRayColor.getX(),finalRayColor.getY(),finalRayColor.getZ());
 		}
 		if(ya==0)
 			printf("%i/%i\n",i,yb);
 	}
-}
-
-void Scene::save(const char* path){
-	plot.save(path);
 }
 
 void Scene::print(){

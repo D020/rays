@@ -23,6 +23,8 @@ public:
 	void setColor(Vec3 color);
 	float getSpecular();
 	void setSpecular(float specular);
+	float getRoughness();
+	void setRoughness(float roughness);
 
 	virtual Collision intersect(Ray ray);
 
@@ -30,6 +32,7 @@ private:
 	Vec3 org;
 	Vec3 color;
 	float specular;
+	float roughness;
 };
 
 #endif

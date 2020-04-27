@@ -170,3 +170,22 @@ TO DO:
 	2: Add primitive type triangle
 
 	3: Multithreading (Fix)
+
+2020 April 27
+
+Multithreading fixed. Used oprofile to sample what functions the most time was spent in. Turns out the random number generator (RNG)
+from the standard C++ library has locks. Found a simple implementation of LCG RNG. Now proper roughness could be implemented.
+The performance gain from multithreading is not noticeable with the poor way that random rays are generated on rough surfaces.
+The dot product of a random vector in the unit sphere with the reflected ray is compared to a roughness-factor and if it is not
+satisfied, a new random direction is generated. With low roughness surfaces, this can take quite a while.
+
+![Alt text](ani_rough.gif?raw=true "Roughness")
+
+TO DO:
+
+	1: Add rectangle lights (somewhat initiated with random packets)
+
+	2: Add primitive type triangle
+
+	3: Generate random rays in a better way than discarding over and over.
+

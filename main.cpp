@@ -19,6 +19,8 @@ using namespace std;
 
 int main() {
 
+	Plot plot(1920,1080);
+
 	printf("\n\n\n\n\n");
 
 	Sphere ball1(Vec3(0 ,0,0),2);	
@@ -27,11 +29,13 @@ int main() {
 
 	Sphere ball2(Vec3(3 ,1,0),2.5);
 	ball2.setColor(Vec3(1.0,0,0));
-	ball2.setSpecular(0.70);
+	ball2.setSpecular(0.5);
+	ball2.setRoughness(0.5);
 
 	Sphere ball3(Vec3(-3,-2,0),1.5);
 	ball3.setColor(Vec3(1.0,1.0,1.0));
 	ball3.setSpecular(1.00);
+	ball3.setRoughness(1.0);
 
 	Plane  wall1(Vec3(0 ,0,5),Vec3(0 ,0,-1));
 	Plane  wall2(Vec3(-5,0,0),Vec3(1 ,0, 0));
@@ -45,7 +49,7 @@ int main() {
 	wall4.setColor(Vec3(1,1,0));
 	wall5.setColor(Vec3(0,1,1));
 
-	//Scene testscene(534,300);
+	//Scene testscene(534/3,300/3);
 	Scene testscene(1280,720);
 	testscene.addPrimitive(&ball1);
 	testscene.addPrimitive(&ball2);
@@ -59,15 +63,18 @@ int main() {
 	testscene.print();
 
 	int idx = 0;
+	int cores = 2;
 	char str[10];
-	testscene.setRays(Vec3(0,0,-10),Vec3(0,0.1,-1));
-	for(float y=4;0<y;y-=0.5){
-		//testscene.setRays(Vec3(y,y,-10),Vec3(0,0.1,-1));
-		testscene.setLight(Vec3(y,y,-5));
+	testscene.setRays(Vec3(0,0,-10),Vec3(0,0.1,-1),&plot);
+	testscene.setLight(Vec3(0,0,-5));
+	for(float y=1;0<=y;y-=0.05){
+
+		ball3.setRoughness(y);
+
 		sprintf(str,"%02d.ppm",idx);
 
-		testscene.render(2);
-		testscene.save(str);
+		testscene.render(12,&plot);
+		plot.save(str);
 
 		idx++;
 	}

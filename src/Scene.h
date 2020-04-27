@@ -2,6 +2,7 @@
 #define __Scene_h_
 
 #include "Primitive.h"
+#include <stdlib.h>
 #include "Plot.h"
 #include "Vec3.h"
 #include "Ray.h"
@@ -20,24 +21,29 @@ public:
 	Scene();
 	Scene(int width, int height);
 	void addPrimitive(Primitive* prim);
-	void setRays(Vec3 org, Vec3 dir);
+	void setRays(Vec3 org, Vec3 dir, Plot* plot);
 	void setLight(Vec3 org);
 	SceneCollision intersect(Ray ray, int ignore);
 
 	vector<Ray> SceneTraceBundle(vector<Ray> rays);
 
-	void render(int cores);
-	void renderPart(int ya, int yb);
+	void render(int cores, Plot* plot);
+	void renderPart(int ya, int yb, Plot* plot);
 	void save(const char* path);
 	void print();
 private:
 	int         noPrimitives;
 	Primitive** primitives;
-	Plot        plot;
-	Ray*		rays;
+	vector<Ray>	rays;
 	Vec3 		light;
 	float horizontalFOVradians;
 	float   verticalFOVradians;
+
+	int32_t prng(int32_t seed);
+
+	int32_t random;
+	struct random_data rd;
+	char state[8];
 
 };
 
