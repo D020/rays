@@ -27,7 +27,9 @@ int main() {
 	//Plot plot(1920/8,1080/8);
 	//Before octree 10.500
 
-	Plot plot(534,300);
+	//Plot plot(534,300);
+
+	Plot plot(1280,720);
 	
 
 	Scene testscene(1280,720);
@@ -110,7 +112,7 @@ int main() {
 	testscene.print();
 
 	int idx = 0;
-	int cores = 12;
+	int cores = 10;
 	char str[10];
 	testscene.setRays(Vec3(0,0,-10),Vec3(0,0.1,-1),&plot);
 	for(float y=0;y<=6;y+=0.2){

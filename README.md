@@ -4,7 +4,7 @@ Results so far (April 30th):
 
 ![Alt text](tris.png?raw=true "Triangles everywhere!")
 
-![Alt text](ani_tris.gif?raw=true "Triangles everywhere!")
+![Alt text](ani_tris_hq.gif?raw=true "Triangles everywhere!")
 
 Animations further down
 
@@ -200,6 +200,8 @@ https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorith
 https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection?url=3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
 
 ![Alt text](tris.png?raw=true "Triangles")
+
+![Alt text](ani_tris_hq2.png?raw=true "Triangles")
 
 TO DO:
 
