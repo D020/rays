@@ -218,28 +218,6 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 			dir = Vec3(sqrt(1-z*z)*cos(theta),sqrt(1-z*z)*sin(theta),z);
 			dir = applyQuatRot(R,dir).norm();
 
-			//printf("dot: %f\n",dir*r);
-
-
-			/*
-			do{
-
-			//float theta = ((float(prng())/float(PRNG_RAND_MAXX))+1)*M_PI;
-			//float z     = (float(prng())/float(PRNG_RAND_MAXX));
-
-			float theta = prng_range(0 ,2*M_PI);
-			float z     = prng_range(-1,1);
-
-
-			dir = Vec3(sqrt(1-z*z)*cos(theta),sqrt(1-z*z)*sin(theta),z);
-
-			}while(dir*r<0.01 || dir*r < (roughness-0.05));
-
-			dir = (1-roughness)*(dir*0.5) + roughness*(r*0.5);
-			dir.norm();
-
-			*/
-
 			ray = Ray(col.position,dir,
 					  color*ray.getPropColor() + ray.getColor()*(1-ray.getPropColor()),
                       specular);

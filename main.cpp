@@ -14,12 +14,22 @@
 #include <math.h>
 #include <algorithm>
 #include <thread>
+#include <chrono> 
 using namespace std;
-
+using namespace std::chrono;
 
 int main() {
 
-	Plot plot(1920,1080);
+	//Plot plot(1920,1080);
+
+
+	//Benchmark size /8
+	//Plot plot(1920/8,1080/8);
+	//Before octree 10.500
+
+	Plot plot(534,300);
+	
+
 	Scene testscene(1280,720);
 
 	printf("\n\n\n\n\n");
@@ -100,18 +110,24 @@ int main() {
 	testscene.print();
 
 	int idx = 0;
-	int cores = 6;
+	int cores = 12;
 	char str[10];
 	testscene.setRays(Vec3(0,0,-10),Vec3(0,0.1,-1),&plot);
-	testscene.setLight(Vec3(0,0,-5));
-	for(float y=1;0<=y;y-=0.20){
+	for(float y=0;y<=6;y+=0.2){
 
-		ball3.setRoughness(y);
+		testscene.setLight(Vec3(-3+y,0,-5));
+		//ball3.setRoughness(y);
 
 		sprintf(str,"%02d.ppm",idx);
 
+		auto start = high_resolution_clock::now();
 		testscene.render(cores,&plot);
-		plot.save(str);
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start);
+
+		printf("Time: %i\n",duration.count()/(1000));
+
+		plot.save(str);	
 
 		idx++;
 	}

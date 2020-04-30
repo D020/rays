@@ -4,6 +4,8 @@ Results so far (April 30th):
 
 ![Alt text](tris.png?raw=true "Triangles everywhere!")
 
+![Alt text](ani_tris.gif?raw=true "Triangles everywhere!")
+
 Animations further down
 
 
