@@ -189,3 +189,17 @@ TO DO:
 
 	3: Generate random rays in a better way than discarding over and over.
 
+2020 April 30
+
+Random rays generated properly now. Triangles implemented using: 
+
+https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+
+https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection?url=3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
+
+![Alt text](tris.png?raw=true "Triangles")
+
+TO DO:
+
+	1: Add rectangle lights (somewhat initiated with random packets)
+

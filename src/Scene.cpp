@@ -10,9 +10,18 @@
 
 #define PRNG_RAND_MAX  0xFFFFFFFF
 #define PRNG_RAND_MAXX 0x7FFFFFFF
-int32_t Scene::prng(int32_t seed){
-	seed = (seed * 1103515245 + 12345);
-	return seed;
+int32_t Scene::prng(){
+	random = (random * 1103515245 + 12345);
+	return random;
+}
+
+float Scene::prng_range(float a, float b){
+	int32_t random = prng();
+	float res = (float(random)/float(PRNG_RAND_MAXX)); //Between -1 and +1
+	      res = (res + 1)/2; //Between 0 and 1
+		  res = res*(b-a);   //Between 0 and (the distance between a and b)
+		  res = res + a;     //Between a and b
+	return res;
 }
 
 Scene::Scene(){
@@ -20,15 +29,13 @@ Scene::Scene(){
 	primitives           = 0;
 	horizontalFOVradians = 0;
 	  verticalFOVradians = 0;
-	rd.state = 0;
-	initstate_r(0, state, sizeof(state), &rd);
+	random               = 0;
 }
 
 Scene::Scene(int width, int height){
 	noPrimitives = 0;
 	primitives   = 0;
-	rd.state     = 0;
-	initstate_r(0, state, sizeof(state), &rd);
+	random       = 0;
 }
 
 void Scene::addPrimitive(Primitive* prim){
@@ -59,6 +66,37 @@ void Scene::addPrimitive(Primitive* prim){
 // 5. Apply to all rays
 
 //https://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another
+//https://math.stackexchange.com/questions/40164/how-do-you-rotate-a-vector-by-a-unit-quaternion
+
+Quat rotateFromTo(Vec3 v1, Vec3 v2){
+	v1 = v1.norm();
+	v2 = v2.norm();
+
+	Vec3 a;
+	float w;
+	if(0.999<v1*v2 || v1*v2<-0.999){
+		a = Vec3(0,0,0);}
+	else{
+		a = v1 % v2;}
+	
+	w = sqrt((v1*v1)*(v2*v2)) + v1*v2;	
+
+	Quat R(w,a.getX(),a.getY(),a.getZ());
+
+	return R.norm();
+
+}
+
+Vec3 applyQuatRot(Quat R, Vec3 a){
+	Quat Rc = R.conj();
+
+	Quat P;
+	P = Quat(0,a.getX(),a.getY(),a.getZ());
+	P = (R*P)*Rc;
+			
+	return P.axis();
+}
+
 void Scene::setRays(Vec3 org, Vec3 dir, Plot* plot){
 	int height = plot->getHeight();
 	int width  = plot->getWidth();
@@ -67,30 +105,7 @@ void Scene::setRays(Vec3 org, Vec3 dir, Plot* plot){
 
 	Vec3 centerRay(0,0,org.getZ()+8);
 
-	centerRay = centerRay.norm();
-	dir       = dir.norm();
-
-	//Rotation from centerRay to dir
-	//Crossproduct is not "defined" when dot<-0.999 or 0.999<dot
-	Vec3 a;
-	float w;
-	if(0.999<centerRay*dir || centerRay*dir<-0.999){
-		a = Vec3(0,0,0);}
-	else{
-		a = centerRay % dir;}
-	
-	w = sqrt((centerRay*centerRay)*(dir*dir)) + centerRay*dir;
-
-	//https://math.stackexchange.com/questions/40164/how-do-you-rotate-a-vector-by-a-unit-quaternion
-
-	Quat R(w,a.getX(),a.getY(),a.getZ());
-	printf("W %f\n",centerRay*dir);
-	R.print(false);
-
-
-	R = R.norm();
-	Quat Rc = R.conj();
-
+	Quat R = rotateFromTo(centerRay,dir);
 
 	for(int i=0; i<height; i++){
 		for(int j=0; j<width; j++){
@@ -99,11 +114,10 @@ void Scene::setRays(Vec3 org, Vec3 dir, Plot* plot){
 			float y =  4.5 - (9.0 /float(height))*i;
 
 			unsigned int idx = i*width+j;
-			Quat P;
-			P = Quat(0,x,y,org.getZ()+8) - Quat(0,org.getX(),org.getY(),org.getZ());
-			P = (R*P)*Rc;
-			
-			Vec3 dir_tmp = P.axis();
+
+			Vec3 P;
+			P = Vec3(x,y,org.getZ()+8) - org;
+			Vec3 dir_tmp = applyQuatRot(R,P);
 
 			rays[idx] = Ray(org, dir_tmp);
 		}
@@ -187,27 +201,35 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 		float specular  = primitives[col.hitIndex]->getSpecular();
 		float roughness = primitives[col.hitIndex]->getRoughness();
 
+		Quat R = rotateFromTo(Vec3(0,0,1),r);
+
 		//Set up new reflected rays
 		for(int ndx=0; ndx<5; ndx++){
 
 			Vec3 dir;
-			do{
-			//float theta = 0  + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI-0)));
-			//float z     = -1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1-(-1))));
+
+			//https://math.stackexchange.com/questions/56784/generate-a-random-direction-within-a-cone
+
+			
+			float angle = (1-roughness) * M_PI/2;
+			float z     = prng_range(cos(angle),1);
+			float theta = prng_range(0,2*M_PI);
+
+			dir = Vec3(sqrt(1-z*z)*cos(theta),sqrt(1-z*z)*sin(theta),z);
+			dir = applyQuatRot(R,dir).norm();
+
+			//printf("dot: %f\n",dir*r);
+
 
 			/*
-			random_r(&rd, &random);
-			float theta = 0  + static_cast <float> (random) /( static_cast <float> (RAND_MAX/(2*M_PI-0)));
-			random_r(&rd, &random);
-			float z     = -1 + static_cast <float> (random) /( static_cast <float> (RAND_MAX/(1-(-1))));
-			*/
+			do{
 
-			random = prng(random);
-			float theta = ((float(random)/float(PRNG_RAND_MAXX))+1)*M_PI;
-			random = prng(random);
-			float z     = (float(random)/float(PRNG_RAND_MAXX));
+			//float theta = ((float(prng())/float(PRNG_RAND_MAXX))+1)*M_PI;
+			//float z     = (float(prng())/float(PRNG_RAND_MAXX));
 
-			//printf("theta %f z %f\n",theta,z);
+			float theta = prng_range(0 ,2*M_PI);
+			float z     = prng_range(-1,1);
+
 
 			dir = Vec3(sqrt(1-z*z)*cos(theta),sqrt(1-z*z)*sin(theta),z);
 
@@ -215,6 +237,8 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 
 			dir = (1-roughness)*(dir*0.5) + roughness*(r*0.5);
 			dir.norm();
+
+			*/
 
 			ray = Ray(col.position,dir,
 					  color*ray.getPropColor() + ray.getColor()*(1-ray.getPropColor()),
@@ -276,7 +300,7 @@ void Scene::renderPart(int ya, int yb, Plot* plot){
 			vector<Ray> raysIn;
 			raysIn.push_back(rayIn);
 
-			for(int bdx=0; bdx<3; bdx++){
+			for(int bdx=0; bdx<2; bdx++){
 				raysIn = SceneTraceBundle(raysIn);
 			}
 

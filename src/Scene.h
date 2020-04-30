@@ -39,11 +39,10 @@ private:
 	float horizontalFOVradians;
 	float   verticalFOVradians;
 
-	int32_t prng(int32_t seed);
+	int32_t prng();
+	float   prng_range(float a, float b);
 
 	int32_t random;
-	struct random_data rd;
-	char state[8];
 
 };
 

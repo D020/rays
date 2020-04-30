@@ -13,6 +13,7 @@ class Primitive {
 
 friend class Sphere;
 friend class Plane;
+friend class Triangle;
 
 public:
 	Primitive();
