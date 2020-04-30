@@ -1,8 +1,8 @@
 # Raytracing
 
-Results so far (April 23rd):
+Results so far (April 30th):
 
-![Alt text](title.png?raw=true "Rays everywhere!")
+![Alt text](tris.png?raw=true "Triangles everywhere!")
 
 Animations further down
 
@@ -171,7 +171,7 @@ TO DO:
 
 	3: Multithreading (Fix)
 
-2020 April 27
+2020 April 27th
 
 Multithreading fixed. Used oprofile to sample what functions the most time was spent in. Turns out the random number generator (RNG)
 from the standard C++ library has locks. Found a simple implementation of LCG RNG. Now proper roughness could be implemented.
@@ -189,7 +189,7 @@ TO DO:
 
 	3: Generate random rays in a better way than discarding over and over.
 
-2020 April 30
+2020 April 30th
 
 Random rays generated properly now. Triangles implemented using: 
 
