@@ -21,7 +21,7 @@ using namespace std::chrono;
 
 int main() {
 	//Benchmark size /8
-	//Plot plot(1920,1080);
+	Plot plot(1920,1080);
 
 	//4,4 with 16
 	//23410
@@ -50,7 +50,7 @@ int main() {
 
 
 	//Plot plot(534,300);
-	Plot plot(1280,720);
+	//Plot plot(1280,720);
 	
 
 	Scene testscene;
@@ -59,7 +59,8 @@ int main() {
 
 	Sphere ball1(Vec3(0 ,0,0),2);	
 	ball1.setColor(Vec3(0,0,1.0));
-	ball1.setSpecular(0.0);	
+	ball1.setSpecular(0.5);	
+	ball1.setRoughness(0.95);	
 
 	Sphere ball2(Vec3(3 ,1,0),2.5);
 	ball2.setColor(Vec3(1.0,0,0));

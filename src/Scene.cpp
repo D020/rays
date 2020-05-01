@@ -186,22 +186,32 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 		Vec3 toLight = light - col.position;
 		Ray shadeRay(col.position + toLight.norm()*0.001,toLight.norm());
 		SceneCollision shadeCol = this->intersect(shadeRay,-1);
-		float intensity;
-		if(shadeCol.distance<toLight.length())
-			intensity = 0;
-		else
-			intensity = lightPower * (-1*toLight.norm()*n)/(toLight.length()*toLight.length());
-		//Otherwise it's given a color with intensity according to the dot product scaled by distance to the light.
-		Vec3 color;
-		color = intensity * primitives[col.hitIndex]->getColor();
-
+		float intensityDiff;
+		float intensitySpec;
 
 		//Reflected color based on specularity that controls
 		//how fussy or sharp the cone of reflected rays are
 		float specular  = primitives[col.hitIndex]->getSpecular();
 		float roughness = primitives[col.hitIndex]->getRoughness();
 
+		if(shadeCol.distance<toLight.length()){
+			intensityDiff = 0;
+			intensitySpec = 0;
+		}
+		else{
+			float dot = (-1*toLight.norm()*n) > 0 ? (-1*toLight.norm()*n) : 0;
+
+			intensityDiff = lightPower * dot/(toLight.length()*toLight.length());
+			intensitySpec = lightPower * pow(dot,specular*8)/(toLight.length()*toLight.length());
+		}
+		//Otherwise it's given a color with intensity according to the dot product scaled by distance to the light.
+		Vec3 color;
+		color = intensityDiff * primitives[col.hitIndex]->getColor(); //+ intensitySpec * primitives[col.hitIndex]->getColor();
+
+
 		Quat R = rotateFromTo(Vec3(0,0,1),r);
+
+		float fallOff = (col.distance+1)*(col.distance+1);
 
 		//Set up new reflected rays
 		for(int ndx=0; ndx<5; ndx++){
@@ -330,7 +340,7 @@ void Scene::renderPart(int ya, int yb, int xa, int xb, Plot* plot, bool** done, 
 			vector<Ray> raysIn;
 			raysIn.push_back(rayIn);
 
-			for(int bdx=0; bdx<2; bdx++){
+			for(int bdx=0; bdx<3; bdx++){
 				raysIn = SceneTraceBundle(raysIn);
 			}
 
