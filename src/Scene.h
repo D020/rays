@@ -27,8 +27,8 @@ public:
 
 	vector<Ray> SceneTraceBundle(vector<Ray> rays);
 
-	void render(int cores, Plot* plot);
-	void renderPart(int ya, int yb, Plot* plot);
+	void render(int cores,int sz, Plot* plot);
+	void renderPart(int ya, int yb, int xa, int xb, Plot* plot, bool** done, int tdx, bool** tile_done, int tile);
 	void save(const char* path);
 	void print();
 private:

@@ -2,7 +2,7 @@
 
 Results so far (April 30th):
 
-![Alt text](tris.png?raw=true "Triangles everywhere!")
+![Alt text](bounding_box.png?raw=true "Bounding boxes")
 
 ![Alt text](ani_tris_hq.gif?raw=true "Triangles everywhere!")
 
@@ -206,4 +206,19 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a
 TO DO:
 
 	1: Add rectangle lights (somewhat initiated with random packets)
+
+	2: Render in 32x32 tiles or any (SZ x SZ tiles)
+
+	3: Add object-primitive (import of .obj files)
+
+	4: Bounding box culling for object-primitive
+
+	5: kd-tree or octree
+
+2020 May 1st
+
+Tile-rendering implemented. Object-primitive added. Bounding box added for primitive. Next is an approximation to kd/oc-tree. The bounding box sped up rendering by a factor 10! Allowing for a render of an object with far more triangles in reasonable time. Box intersection was almost directly copied from
+https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
+
+![Alt text](bounding_box.png?raw=true "Triangles")
 

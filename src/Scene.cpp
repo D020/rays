@@ -245,33 +245,85 @@ void Scene::render(int cores, Plot* plot){
 */
 
 
-void Scene::render(int cores, Plot* plot){
-	int height = plot->getHeight();
+void Scene::render(int cores,int sz, Plot* plot){
+	float height = plot->getHeight();
+	float width  = plot->getWidth();
 
-	vector<thread> pss;
+	int tiles_height = ceil(height/float(sz));
+	int tiles_width = ceil(width/float(sz));
 
-	int interval = height/cores;
+	printf("%i %i\n",tiles_height,tiles_width);
 
-	for(int cdx=0; cdx<cores;cdx++){
-		thread ps(&Scene::renderPart, this, floor(interval*cdx), floor(interval*(cdx+1)), plot);
-		int from = interval*cdx;
-		int to   = interval*(cdx+1);
-		
-		//pss.emplace_back([&]{renderPart(from,to);});
-		pss.push_back(move(ps));
-		printf("From %i, To %i\n",from,to);
+	vector<int> xas;
+	vector<int> xbs;
+	vector<int> yas;
+	vector<int> ybs;
+
+	//First we set up all the tiles from-to x and y values	
+	
+	for(int ty=0; ty<tiles_height; ty++){
+		int ya = ty*sz;
+		int yb = (ty+1)*sz;
+		if(height<yb)
+			yb = height;
+		for(int tx=0; tx<tiles_width; tx++){
+			int xa = tx*sz;
+			int xb = (tx+1)*sz;
+			if(width<xb)
+				xb = width;
+			xas.push_back(xa);
+			xbs.push_back(xb);
+			yas.push_back(ya);
+			ybs.push_back(yb);
+		}
 	}
-	for(int cdx=0; cdx<cores;cdx++){
-		pss[cdx].join();
+	
+	//Then we set up a bool-array that can tell us whether
+	//a thread is done with its 32x32 tiles or not such
+	//that we may spawn a new one.
+
+	bool* done = (bool*) calloc(cores,sizeof(bool));
+	memset(done,true,cores);
+	bool* tile_done = (bool*) calloc(xas.size(),sizeof(bool));
+
+	unsigned int tiles_dispatched = 0;
+	printf("\e[1;1H\e[2J");
+	while(tiles_dispatched<xas.size()){
+		for(int cdx=0; cdx<cores; cdx++){
+			if(tiles_dispatched==xas.size())
+				break;
+			if(done[cdx]==true){
+				done[cdx] = false;
+				int xa = xas[tiles_dispatched];
+				int xb = xbs[tiles_dispatched];
+				int ya = yas[tiles_dispatched];
+				int yb = ybs[tiles_dispatched];		
+				thread ps(&Scene::renderPart, this,ya,yb,xa,xb,plot,&done,cdx, &tile_done, tiles_dispatched);
+				ps.detach();
+				tiles_dispatched++;
+			}
+		}		
+		printf("\033[%d;%dH", 0, 0);
+		printf("Tiles dispatched %u / %lu\n",tiles_dispatched,xas.size());
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
+
+	bool total_done;
+
+	do{
+		total_done = true;
+		for(unsigned int tdx=0;tdx<xas.size();tdx++)
+			total_done = total_done && tile_done[tdx];
+	}while(!total_done);
+	
 
 }
 
-void Scene::renderPart(int ya, int yb, Plot* plot){
+void Scene::renderPart(int ya, int yb, int xa, int xb, Plot* plot, bool** done, int tdx, bool** tile_done, int tile){
+
 	int width  = plot->getWidth();
 	for(int i=ya; i<yb; i++){
-		for(int j=0; j<width; j++){
-
+		for(int j=xa; j<xb; j++){
 			unsigned int idx = i*width+j;
 			Ray rayIn = rays[idx];
 
@@ -291,9 +343,11 @@ void Scene::renderPart(int ya, int yb, Plot* plot){
 
 			plot->plot(j,i,finalRayColor.getX(),finalRayColor.getY(),finalRayColor.getZ());
 		}
-		if(ya==0)
-			printf("%i/%i\n",i,yb);
 	}
+
+	(*done)[tdx] = true;
+	(*tile_done)[tile] = true;
+
 }
 
 void Scene::print(){
