@@ -4,12 +4,12 @@ Results so far (April 30th):
 
 ![Alt text](bounding_box.png?raw=true "Bounding boxes")
 
-![Alt text](ani_tris_hq.gif?raw=true "Triangles everywhere!")
+![Alt text](subdivide.gif?raw=true "Triangles everywhere!")
 
 Animations further down
 
 
-2020 April 12th
+# 2020 April 12th
 
 Multithreaded Raytracer
 
@@ -18,12 +18,12 @@ https://www.flipcode.com/archives/Raytracing_Topics_Techniques-Part_1_Introducti
 But mostly made up on the go from snippets around the internet.
 
 
-2020 April 13th 
+# 2020 April 13th 
 
 First we will implement mathematical 3D-vectors as a class.
 Initially some basic arithmetics, more added as needed.
 
-2020 April 14th
+# 2020 April 14th
 
 Iteratively implementing rays, vectors and primitives.
 TO DO:
@@ -37,7 +37,7 @@ TO DO:
 
 	4: Spawn rays
 
-2020 April 15th
+# 2020 April 15th
 
 We have tracing! Yay! \o/
 
@@ -62,7 +62,7 @@ TO DO (Not ordered):
 
 	8: Animation
 
-2020 April 17th
+# 2020 April 17th
 
 Minor detour considering spectral tracing and generating RGB colors from XYZ CIE from wavelengths.
 Better documentation started.
@@ -86,7 +86,7 @@ TO DO (Not ordered):
 
 	7: Animation
 
-2020 April 21st
+# 2020 April 21st
 
 Implemented some functionality for Quats, added planes and did some primitive animation.
 
@@ -113,7 +113,7 @@ TO DO:
 
 	8: Animation
 
-2020 April 22nd
+# 2020 April 22nd
 
 Tested recursive (turned into a queue) raytracing. Things are in need of refactoring.
 Especially Scene.cpp and everything to do with rays, colors, materials and collisions.
@@ -133,7 +133,7 @@ TO DO:
 
 	5: Multithreading
 
-2020 April 23rd
+# 2020 April 23rd
 
 Some freestyled color handling was implemented.
 Random packets of rays implemented.
@@ -159,7 +159,7 @@ TO DO:
 	4: Multithreading
 
 
-2020 April 24th
+# 2020 April 24th
 
 Shadows added. Some kind of attempt at multithreading implemented with disappointing results in terms of peformance gains.
 
@@ -173,7 +173,7 @@ TO DO:
 
 	3: Multithreading (Fix)
 
-2020 April 27th
+# 2020 April 27th
 
 Multithreading fixed. Used oprofile to sample what functions the most time was spent in. Turns out the random number generator (RNG)
 from the standard C++ library has locks. Found a simple implementation of LCG RNG. Now proper roughness could be implemented.
@@ -191,7 +191,7 @@ TO DO:
 
 	3: Generate random rays in a better way than discarding over and over.
 
-2020 April 30th
+# 2020 April 30th
 
 Random rays generated properly now. Triangles implemented using: 
 
@@ -201,7 +201,7 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a
 
 ![Alt text](tris.png?raw=true "Triangles")
 
-![Alt text](ani_tris_hq2.png?raw=true "Triangles")
+![Alt text](ani_tris_hq.gif?raw=true "Triangles")
 
 TO DO:
 
@@ -215,10 +215,29 @@ TO DO:
 
 	5: kd-tree or octree
 
-2020 May 1st
+# 2020 May 1st
 
 Tile-rendering implemented. Object-primitive added. Bounding box added for primitive. Next is an approximation to kd/oc-tree. The bounding box sped up rendering by a factor 10! Allowing for a render of an object with far more triangles in reasonable time. Box intersection was almost directly copied from
 https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
 
-![Alt text](bounding_box.png?raw=true "Triangles")
+![Alt text](bounding_box.png?raw=true "Bounding box")
+
+TO DO:
+
+	1: Add rectangle lights (somewhat initiated with random packets)
+
+	2: kd-tree or octree
+
+
+# 2020 May 1st (2nd update)
+I've written a hack that is less efficient than octree, just to test the idea. So far today, we've gained a speedup of 4000%. That allows for subdividing the human-character and rendering the dancing shadows again!
+
+![Alt text](subdivide.gif?raw=true "Subdivisions in .obj and Raytracers!")
+
+TO DO:
+
+	1: Add rectangle lights (somewhat initiated with random packets)
+
+	2: PROPER kd-tree or octree
+
 

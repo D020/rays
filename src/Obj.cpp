@@ -3,7 +3,9 @@
 #include <limits>
 #include <math.h>
 #include <algorithm>
-Obj::Obj(char* path, Vec3 displace, int subd){
+Obj::Obj(char* path, Vec3 displace, int sub){
+
+	float subd = sub;
 	
 	char * line = NULL;
 	size_t len  = 0;
@@ -51,24 +53,46 @@ Obj::Obj(char* path, Vec3 displace, int subd){
 		}	
 	}
 
-	min = Vec3(min_x,min_y,min_z);
-	max = Vec3(max_x,max_y,max_z);
+	minG = Vec3(min_x,min_y,min_z);
+	maxG = Vec3(max_x,max_y,max_z);
 
-	float x_range = max.getX() - min.getX();
-	float y_range = max.getY() - min.getY();
-	float z_range = max.getZ() - min.getZ();
+	float x_range = maxG.getX() - minG.getX();
+	float y_range = maxG.getY() - minG.getY();
+	float z_range = maxG.getZ() - minG.getZ();
+	int cubes = 0;
+	for(float xsub=0; xsub<subd; xsub++){
+		float min_x = (xsub/subd)*x_range + minG.getX();
+		float max_x = ((xsub+1)/subd)*x_range + minG.getX();
+		for(float ysub=0; ysub<subd; ysub++){
+			float min_y = (ysub/subd)*y_range + minG.getY();
+			float max_y = ((ysub+1)/subd)*y_range + minG.getY();
+			for(float zsub=0; zsub<subd; zsub++){
+				float min_z = (zsub/subd)*z_range + minG.getZ();
+				float max_z = ((zsub+1)/subd)*z_range + minG.getZ();
+				
+				Vec3 pushMin = Vec3(min_x,min_y,min_z);
+				Vec3 pushMax = Vec3(max_x,max_y,max_z);
 
-	printf("miny %f maxy %f",min.getY(),max.getY())
+				minSub.push_back(pushMin);
+				maxSub.push_back(pushMax);
+				
+				vector<int> indices;				
 
-	for(float ysub=0; ysub<subd; ysub++){
-		float min_y = (ysub/subd)*y_range + min.getY();
-		float max_y = ((ysub+1)/subd)*y_range + min.getY();
-		printf("Subbox miny %f, maxy %f\n",min_y,max_y);
+				for(unsigned int tdx=0; tdx<tris.size(); tdx++){
+
+					if(tris[tdx].inBox(pushMin,pushMax))
+						indices.push_back(tdx);
+				
+				}
+				indSub.push_back(indices);
+				cubes++;
+			}
+		}
 	}
 
 }
 
-bool Obj::boxIntersect(Ray ray) { 
+bool Obj::boxIntersect(Ray ray, Vec3 min, Vec3 max) { 
 //Almost direct copy of:
 //https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
     float tmin = (min.getX() - ray.getOrg().getX()) / ray.getDir().getX(); 
@@ -113,16 +137,32 @@ Collision Obj::intersect(Ray ray){
 	colMin.normal   = -1.0*ray.getDir().norm();
 	colMin.distance = std::numeric_limits<float>::infinity();
 
-	if(boxIntersect(ray)){
-		for(unsigned int pdx=0; pdx<tris.size(); pdx++){
-			Collision curCol = tris[pdx].intersect(ray);
-			if (curCol.distance < colMin.distance && 0 < curCol.distance){
-				colMin.distance = curCol.distance;
-				colMin  = curCol;
+	if(!boxIntersect(ray, minG, maxG))
+		return colMin;
+
+
+	for(unsigned int bdx=0;bdx<minSub.size();bdx++){
+		if(boxIntersect(ray, minSub[bdx], maxSub[bdx])){
+			for(unsigned int pdx=0; pdx<indSub[bdx].size(); pdx++){
+				Collision curCol = tris[indSub[bdx][pdx]].intersect(ray);
+				if (curCol.distance < colMin.distance && 0 < curCol.distance){
+					colMin.distance = curCol.distance;
+					colMin  = curCol;
+				}
 			}
 		}
 	}
 
+/*
+	
+	for(unsigned int pdx=0; pdx<tris.size(); pdx++){
+		Collision curCol = tris[pdx].intersect(ray);
+		if (curCol.distance < colMin.distance && 0 < curCol.distance){
+			colMin.distance = curCol.distance;
+			colMin  = curCol;
+		}
+	}
+*/
 	return colMin;
 }
 

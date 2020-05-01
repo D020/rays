@@ -59,6 +59,34 @@ Collision Triangle::intersect(Ray ray){
 	return result;
 }
 
+Vec3 Triangle::getVert1(){
+	return vert1;
+}
+
+Vec3 Triangle::getVert2(){
+	return vert2;
+}
+
+Vec3 Triangle::getVert3(){
+	return vert3;
+}
+
+bool vertexInBox(Vec3 min, Vec3 max, Vec3 vert){
+	if(min.getX()<=vert.getX() && vert.getX()<=max.getX()){
+		if(min.getY()<=vert.getY() && vert.getY()<=max.getY()){
+			if(min.getZ()<=vert.getZ() && vert.getZ()<=max.getZ())
+				return true;
+		}
+	}
+	return false;
+}
+
+bool Triangle::inBox(Vec3 min, Vec3 max){
+	if(vertexInBox(min,max,vert1) || vertexInBox(min,max,vert2) || vertexInBox(min,max,vert3))
+		return true;
+	return false;
+}
+
 void Triangle::print(){
 	printf("Triangle with V1 V2 V3\n");
 	this->vert1.print(false);

@@ -21,7 +21,7 @@ using namespace std::chrono;
 
 int main() {
 	//Benchmark size /8
-	Plot plot(1920,1080);
+	//Plot plot(1920,1080);
 
 	//4,4 with 16
 	//23410
@@ -37,6 +37,10 @@ int main() {
 	//4,4 with 64 and BB
 	//5084
 
+	//4,4 with 16 and BB SUB4
+	//1090
+
+
 	//1,1 with 16 and BB
 	//62365
 	//1,1 with 32 and BB
@@ -46,7 +50,7 @@ int main() {
 
 
 	//Plot plot(534,300);
-	//Plot plot(1280,720);
+	Plot plot(1280,720);
 	
 
 	Scene testscene;
@@ -79,7 +83,7 @@ int main() {
 	wall4.setColor(Vec3(1,1,0));
 	wall5.setColor(Vec3(0,1,1));
 
-	Obj man("man_sub2.obj", Vec3(2,-2,-2));
+	Obj man("man_sub2.obj", Vec3(2,-2,-2), 4);
 	man.setColor(Vec3(0.476990,0.319510,0.288094));
 	man.setSpecular(0.30);
 	man.setRoughness(0.90);
@@ -117,11 +121,11 @@ int main() {
 		auto stop = high_resolution_clock::now();
 		auto duration = duration_cast<microseconds>(stop - start);
 
-		printf("Time: %i\n",duration.count()/(1000));
+		printf("Time: %i\n",int(duration.count()/(1000)));
 
 		plot.save(str);	
 
-		return 0;
+		//return 0;
 
 		idx++;
 	}
