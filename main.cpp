@@ -56,9 +56,9 @@ int main() {
 	floor.setColor(Vec3(0,1,1));
 
 
-	//Obj man("man_sub.obj", Vec3(2,-2,-2), 4);
-	Obj man("man_sub2.obj", Vec3(2,-2,-2), 4);
-	//Obj man("cube.obj", Vec3(2,-2,-2), 4);
+	//Obj man("objects/man_sub.obj", Vec3(2,-2,-2), 4);
+	Obj man("objects/man_sub2.obj", Vec3(2,-2,-2), 4);
+	//Obj man("objects/cube.obj", Vec3(2,-2,-2), 4);
 	man.setColor(Vec3(0.476990,0.319510,0.288094));
 	man.setReflectance(0.50);
 	man.setRoughness(0.10);

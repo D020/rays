@@ -2,9 +2,9 @@
 
 Results so far (May 3rd):
 
-![Alt text](bounding_box.png?raw=true "Bounding boxes")
+![Alt text](media/bounding_box.png?raw=true "Bounding boxes")
 
-![Alt text](ani_opti.gif?raw=true "Triangles everywhere!")
+![Alt text](media/ani_opti.gif?raw=true "Triangles everywhere!")
 
 Animations further down
 
@@ -41,7 +41,7 @@ TO DO:
 
 We have tracing! Yay! \o/
 
-![Alt text](test.jpg?raw=true "First trace")
+![Alt text](media/test.jpg?raw=true "First trace")
 
 TO DO (Not ordered):
 
@@ -90,7 +90,7 @@ TO DO (Not ordered):
 
 Implemented some functionality for Quats, added planes and did some primitive animation.
 
-![Alt text](ani.gif?raw=true "Primitive animation")
+![Alt text](media/ani.gif?raw=true "Primitive animation")
 
 Fixed distance has to be positive. Otherwise collision happens behind viewpoint.
 Fixed normalizing Vectors or Quats (when they are 0).
@@ -119,7 +119,7 @@ Tested recursive (turned into a queue) raytracing. Things are in need of refacto
 Especially Scene.cpp and everything to do with rays, colors, materials and collisions.
 Documentation UML needs to be updated as well and used to plan any further steps.
 
-![Alt text](ani_refl.gif?raw=true "Primitive animation")
+![Alt text](media/ani_refl.gif?raw=true "Primitive animation")
 
 TO DO:
 
@@ -140,9 +140,9 @@ Random packets of rays implemented.
 Documentation still needs to be updated.
 Below is an example (scaled down hi-res render) artifacts are clearly visible.
 
-![Alt text](supersampled.png?raw=true "4k downsized")
+![Alt text](media/supersampled.png?raw=true "4k downsized")
 
-![Alt text](ani_super.gif?raw=true "1280 downsized animation")
+![Alt text](media/ani_super.gif?raw=true "1280 downsized animation")
 
 Different amounts of specularity results in different scattering of rays and preservation of color.
 This gives objects some kind of "texture" or roughness. We are reaching the limits of ray tracing however.
@@ -163,7 +163,7 @@ TO DO:
 
 Shadows added. Some kind of attempt at multithreading implemented with disappointing results in terms of peformance gains.
 
-![Alt text](ani_shadows.gif?raw=true "Shadows")
+![Alt text](media/ani_shadows.gif?raw=true "Shadows")
 
 TO DO:
 
@@ -181,7 +181,7 @@ The performance gain from multithreading is not noticeable with the poor way tha
 The dot product of a random vector in the unit sphere with the reflected ray is compared to a roughness-factor and if it is not
 satisfied, a new random direction is generated. With low roughness surfaces, this can take quite a while.
 
-![Alt text](ani_rough.gif?raw=true "Roughness")
+![Alt text](media/ani_rough.gif?raw=true "Roughness")
 
 TO DO:
 
@@ -199,9 +199,9 @@ https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorith
 
 https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection?url=3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
 
-![Alt text](tris.png?raw=true "Triangles")
+![Alt text](media/tris.png?raw=true "Triangles")
 
-![Alt text](ani_tris_hq.gif?raw=true "Triangles")
+![Alt text](media/ani_tris_hq.gif?raw=true "Triangles")
 
 TO DO:
 
@@ -220,7 +220,7 @@ TO DO:
 Tile-rendering implemented. Object-primitive added. Bounding box added for primitive. Next is an approximation to kd/oc-tree. The bounding box sped up rendering by a factor 10! Allowing for a render of an object with far more triangles in reasonable time. Box intersection was almost directly copied from
 https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
 
-![Alt text](bounding_box.png?raw=true "Bounding box")
+![Alt text](media/bounding_box.png?raw=true "Bounding box")
 
 TO DO:
 
@@ -232,7 +232,7 @@ TO DO:
 # 2020 May 1st (2nd update)
 I've written a hack that is less efficient than octree, just to test the idea. So far today, we've gained a speedup of 4000%. That allows for subdividing the human-character and rendering the dancing shadows again!
 
-![Alt text](subdivide.gif?raw=true "Subdivisions in .obj and Raytracers!")
+![Alt text](media/subdivide.gif?raw=true "Subdivisions in .obj and Raytracers!")
 
 TO DO:
 
