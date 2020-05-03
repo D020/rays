@@ -1,10 +1,10 @@
 # Raytracing
 
-Results so far (April 30th):
+Results so far (May 3rd):
 
 ![Alt text](bounding_box.png?raw=true "Bounding boxes")
 
-![Alt text](subdivide.gif?raw=true "Triangles everywhere!")
+![Alt text](ani_opti.gif?raw=true "Triangles everywhere!")
 
 Animations further down
 
@@ -240,4 +240,6 @@ TO DO:
 
 	2: PROPER kd-tree or octree
 
-
+# 2020 May 3rd (2nd update)
+Optimizations: Only one thread is spawned pr. core/hyperthread. Compilerflag O2 and LTO. This gave a speedup of about 400%.
+Some changes in bundleTrace as well.

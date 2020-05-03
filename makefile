@@ -7,7 +7,12 @@ GCC = g++
 SOURCES = $(shell find . -type f -name '*.cpp' -a ! -name '*test*')
 
 OBJS := $(patsubst %.c,%.o,$(SOURCES))
-CFLAGS = -g -Wall
+
+#Debug build
+#CFLAGS = -g -Wall
+
+#Optimized build
+CFLAGS = -O2 -flto -Wall 
 
 LIBS := pthread
 LIBS := $(addprefix -l,$(LIBS))

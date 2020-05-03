@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <limits>
 #include <thread>
+#include <atomic>
 
 #define PRNG_RAND_MAX  0xFFFFFFFF
 #define PRNG_RAND_MAXX 0x7FFFFFFF
@@ -125,8 +126,8 @@ void Scene::setRays(Vec3 org, Vec3 dir, Plot* plot){
 
 }
 
-void Scene::setLight(Vec3 light){
-	this->light = light;
+void Scene::moveLight(int ldx, Vec3 org){
+	point_lights[ldx] = org;
 }
 
 SceneCollision Scene::intersect(Ray ray, int ignore){
@@ -158,14 +159,23 @@ SceneCollision Scene::intersect(Ray ray, int ignore){
 	return scCol;
 }
 
-vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
+bool Scene::shadeTrace(Vec3 toLight, Vec3 position){
+	Ray shadeRay(position + toLight.norm()*0.001,toLight.norm());
+	SceneCollision shadeCol = this->intersect(shadeRay,-1);
+
+	if(shadeCol.distance<toLight.length()){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays, int bounce){
 	vector<SceneCollision> cols;
 	vector<Ray> newRays;
-	
-	float lightPower = 200;
 
-	for(unsigned int rdx=0; rdx<rays.size(); rdx++){
-		Ray ray_tmp = rays[rdx];
+	for(auto& ray_tmp : rays){
 
 		//Dirty self-collide hack
 		Ray ray(ray_tmp.getOrg()+ray_tmp.getDir()*0.001,ray_tmp.getDir(),ray_tmp.getColor(),ray_tmp.getPropColor());
@@ -181,47 +191,44 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 		Vec3 d = ray.getDir().norm();
 		Vec3 r = d - 2*(d*n)*n;
 
-
-		//Is this point in the shadow of another object?
-		Vec3 toLight = light - col.position;
-		Ray shadeRay(col.position + toLight.norm()*0.001,toLight.norm());
-		SceneCollision shadeCol = this->intersect(shadeRay,-1);
-		float intensityDiff;
-		float intensitySpec;
-
-		//Reflected color based on specularity that controls
-		//how fussy or sharp the cone of reflected rays are
-		float specular  = primitives[col.hitIndex]->getSpecular();
-		float roughness = primitives[col.hitIndex]->getRoughness();
-
-		if(shadeCol.distance<toLight.length()){
-			intensityDiff = 0;
-			intensitySpec = 0;
-		}
-		else{
-			float dot = (-1*toLight.norm()*n) > 0 ? (-1*toLight.norm()*n) : 0;
-
-			intensityDiff = lightPower * dot/(toLight.length()*toLight.length());
-			intensitySpec = lightPower * pow(dot,specular*8)/(toLight.length()*toLight.length());
-		}
-		//Otherwise it's given a color with intensity according to the dot product scaled by distance to the light.
+		//########## LIGHT #############
 		Vec3 color;
-		color = intensityDiff * primitives[col.hitIndex]->getColor(); //+ intensitySpec * primitives[col.hitIndex]->getColor();
+		for(unsigned int ldx=0; ldx<point_lights.size();ldx++){
+			float lightPower = point_lightspower[ldx];
 
+			//Is this point in the shadow of another object?
+			Vec3 toLight = point_lights[ldx] - col.position;
+			float intensityDiff;
+			//float intensitySpec;
+			if(shadeTrace(toLight, col.position)){;
+				intensityDiff = 0;
+				//intensitySpec = 0;
+			}
+			else{//Otherwise it's given a color with intensity according to the dot product scaled by distance to the light.
+				float fallOff = toLight.length()*toLight.length();
+				float dot = (-1*toLight.norm()*n) > 0 ? (-1*toLight.norm()*n) : 0;
+				intensityDiff = lightPower * dot/fallOff;
+				//intensitySpec = lightPower * pow(dot,8)/fallOff;
+			}
 
+			color = color + intensityDiff * primitives[col.hitIndex]->getColor();
+		}
+		//######### END OF LIGHT #############
+
+		//float specular  = primitives[col.hitIndex]->getSpecular();
+		float roughness = primitives[col.hitIndex]->getRoughness();
+		float reflectance = primitives[col.hitIndex]->getReflectance();
 		Quat R = rotateFromTo(Vec3(0,0,1),r);
 
-		float fallOff = (col.distance+1)*(col.distance+1);
-
+		//https://math.stackexchange.com/questions/56784/generate-a-random-direction-within-a-cone
 		//Set up new reflected rays
-		for(int ndx=0; ndx<5; ndx++){
+		//Reflected color based on reflectance and roughness that controls
+		//how fussy or sharp the cone of reflected rays are
+		for(int ndx=0; ndx<5-bounce*2; ndx++){
 
 			Vec3 dir;
-
-			//https://math.stackexchange.com/questions/56784/generate-a-random-direction-within-a-cone
-
 			
-			float angle = (1-roughness) * M_PI/2;
+			float angle = roughness * M_PI/2;
 			float z     = prng_range(cos(angle),1);
 			float theta = prng_range(0,2*M_PI);
 
@@ -229,10 +236,8 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 			dir = applyQuatRot(R,dir).norm();
 
 			ray = Ray(col.position,dir,
-					  color*ray.getPropColor() + ray.getColor()*(1-ray.getPropColor()),
-                      specular);
-		
-			//ignoreIndex = col.hitIndex;
+					  color*ray.getPropColor() + ray.getColor()*(1-ray.getPropColor()), //Vec3 color
+                      reflectance*ray.getPropColor());									//float propColor
 
 			newRays.push_back(ray);
 		}
@@ -241,18 +246,6 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays){
 
 	return newRays;	
 }
-
-/*
-void Scene::render(int cores, Plot* plot){
-	
-	int height = plot->getHeight();
-
-    std::thread t1(&Scene::renderPart, this,  0,       height/2, plot);
-    std::thread t2(&Scene::renderPart, this, height/2, height,   plot);
-    t1.join();
-    t2.join();
-}
-*/
 
 
 void Scene::render(int cores,int sz, Plot* plot){
@@ -265,71 +258,59 @@ void Scene::render(int cores,int sz, Plot* plot){
 	printf("%i %i\n",tiles_height,tiles_width);
 
 	vector<int> xas;
-	vector<int> xbs;
 	vector<int> yas;
-	vector<int> ybs;
 
 	//First we set up all the tiles from-to x and y values	
 	
 	for(int ty=0; ty<tiles_height; ty++){
 		int ya = ty*sz;
-		int yb = (ty+1)*sz;
-		if(height<yb)
-			yb = height;
 		for(int tx=0; tx<tiles_width; tx++){
 			int xa = tx*sz;
-			int xb = (tx+1)*sz;
-			if(width<xb)
-				xb = width;
 			xas.push_back(xa);
-			xbs.push_back(xb);
 			yas.push_back(ya);
-			ybs.push_back(yb);
 		}
 	}
 	
-	//Then we set up a bool-array that can tell us whether
-	//a thread is done with its 32x32 tiles or not such
-	//that we may spawn a new one.
 
-	bool* done = (bool*) calloc(cores,sizeof(bool));
-	memset(done,true,cores);
-	bool* tile_done = (bool*) calloc(xas.size(),sizeof(bool));
-
-	unsigned int tiles_dispatched = 0;
-	printf("\e[1;1H\e[2J");
-	while(tiles_dispatched<xas.size()){
-		for(int cdx=0; cdx<cores; cdx++){
-			if(tiles_dispatched==xas.size())
-				break;
-			if(done[cdx]==true){
-				done[cdx] = false;
-				int xa = xas[tiles_dispatched];
-				int xb = xbs[tiles_dispatched];
-				int ya = yas[tiles_dispatched];
-				int yb = ybs[tiles_dispatched];		
-				thread ps(&Scene::renderPart, this,ya,yb,xa,xb,plot,&done,cdx, &tile_done, tiles_dispatched);
-				ps.detach();
-				tiles_dispatched++;
+	std::vector<std::thread> threads(cores);
+	std::atomic<size_t> idxNextTile { 0 };
+	const auto nTiles = xas.size();
+	int nThread = 0;
+	for (auto& thread : threads)
+	{
+		auto myCdx = nThread++;
+		thread = std::thread([&, myCdx]()
+		{
+			for (size_t idxTile = idxNextTile++; idxTile < nTiles; idxTile = idxNextTile++)
+			{
+				int xa = xas[idxTile];
+				int xb = xa + sz;
+				if(width<xb)
+					xb = width;
+				int ya = yas[idxTile];
+				int yb = ya + sz;
+				if(height<yb)
+					yb = height;
+				renderPart(ya,yb,xa,xb,plot);
 			}
-		}		
-		printf("\033[%d;%dH", 0, 0);
-		printf("Tiles dispatched %u / %lu\n",tiles_dispatched,xas.size());
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		});
 	}
 
-	bool total_done;
+	printf("\e[1;1H\e[2J");
+	for (size_t idxTile = idxNextTile; idxTile < nTiles; idxTile = idxNextTile)
+	{
+		printf("\033[%d;%dH", 0, 0);
+	 	printf("Tiles dispatched %lu / %lu\n",idxTile,nTiles);
+	 	std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		
+	}
 
-	do{
-		total_done = true;
-		for(unsigned int tdx=0;tdx<xas.size();tdx++)
-			total_done = total_done && tile_done[tdx];
-	}while(!total_done);
+	for (auto& thread : threads)
+		thread.join();
 	
-
 }
 
-void Scene::renderPart(int ya, int yb, int xa, int xb, Plot* plot, bool** done, int tdx, bool** tile_done, int tile){
+void Scene::renderPart(int ya, int yb, int xa, int xb, Plot* plot){
 
 	int width  = plot->getWidth();
 	for(int i=ya; i<yb; i++){
@@ -341,7 +322,7 @@ void Scene::renderPart(int ya, int yb, int xa, int xb, Plot* plot, bool** done, 
 			raysIn.push_back(rayIn);
 
 			for(int bdx=0; bdx<3; bdx++){
-				raysIn = SceneTraceBundle(raysIn);
+				raysIn = SceneTraceBundle(raysIn,bdx);
 			}
 
 			Vec3 finalRayColor(0,0,0);
@@ -354,10 +335,11 @@ void Scene::renderPart(int ya, int yb, int xa, int xb, Plot* plot, bool** done, 
 			plot->plot(j,i,finalRayColor.getX(),finalRayColor.getY(),finalRayColor.getZ());
 		}
 	}
+}
 
-	(*done)[tdx] = true;
-	(*tile_done)[tile] = true;
-
+void Scene::addPointLight(Vec3 pos, float power){
+	point_lights.push_back(pos);
+	point_lightspower.push_back(power);
 }
 
 void Scene::print(){

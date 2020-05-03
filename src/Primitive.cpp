@@ -6,6 +6,7 @@ Primitive::Primitive(){
 	color = Vec3(1.0,1.0,0.0);
 	specular = 0.0;
 	roughness = 0.0;
+	reflectance = 0.0;
 }
 
 Primitive::Primitive(Vec3 org){
@@ -52,3 +53,10 @@ void Primitive::setRoughness(float roughness){
 	this->roughness = roughness;
 }
 
+float Primitive::getReflectance(){
+	return this->reflectance;
+}
+
+void Primitive::setReflectance(float reflectance){
+	this->reflectance = reflectance;
+}

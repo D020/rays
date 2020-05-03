@@ -11,10 +11,6 @@ struct Collision {
 
 class Primitive {
 
-friend class Sphere;
-friend class Plane;
-friend class Triangle;
-
 public:
 	Primitive();
 	Primitive(Vec3 org);
@@ -26,14 +22,19 @@ public:
 	void setSpecular(float specular);
 	float getRoughness();
 	void setRoughness(float roughness);
+	float getReflectance();
+	void setReflectance(float reflectance);
 
 	virtual Collision intersect(Ray ray);
 
-private:
+protected:
 	Vec3 org;
+
+private:
 	Vec3 color;
 	float specular;
 	float roughness;
+	float reflectance;
 };
 
 #endif
