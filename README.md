@@ -253,3 +253,7 @@ TO DO:
 
 	1: Add rectangle lights (somewhat initiated with random packets)
 
+# 2020 May 4th (2nd update)
+Used https://stackoverflow.com/questions/17458562/efficient-aabb-triangle-intersection-in-c-sharp to check whether a triangle intersects an Octree box. No more holes! It takes half a second before the tracing starts, but this is independent of the resolution that is rendered in and how many animated frames you want to make.
+
+

@@ -12,6 +12,7 @@ public:
 	Vec3 getVert2();
 	Vec3 getVert3();
 	bool inBox(Vec3 min, Vec3 max);
+	bool triangleIntersectBox(Vec3 min, Vec3 max);
 private:
 	Vec3 vert1;
 	Vec3 vert2;

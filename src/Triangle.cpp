@@ -3,6 +3,8 @@
 #include <limits>
 #include <math.h>
 #include <algorithm>
+#include <vector>
+using namespace std;
 Triangle::	Triangle(Vec3 vert1, Vec3 vert2, Vec3 vert3){
 	this->vert1 = vert1;
 	this->vert2 = vert2;
@@ -79,6 +81,96 @@ bool vertexInBox(Vec3 min, Vec3 max, Vec3 vert){
 		}
 	}
 	return false;
+}
+
+void Project(vector<Vec3> points, Vec3 axis, float* min, float* max){
+    *min = std::numeric_limits<float>::infinity();
+    *max = -std::numeric_limits<float>::infinity();
+
+	for(auto& p : points){
+		float val = axis * p;
+		if (val < *min) *min = val;
+		if (*max < val) *max = val;
+	}	
+}
+
+//https://stackoverflow.com/questions/17458562/efficient-aabb-triangle-intersection-in-c-sharp
+bool Triangle::triangleIntersectBox(Vec3 min, Vec3 max){
+	float triangleMin, triangleMax;
+	float boxMin, boxMax;
+
+	Vec3 boxNormals[3];
+	boxNormals[0] = Vec3(1,0,0);
+	boxNormals[1] = Vec3(0,1,0);
+	boxNormals[2] = Vec3(0,0,1);
+
+	vector<Vec3> triangleVertices;
+	triangleVertices.push_back(vert1);
+	triangleVertices.push_back(vert2);
+	triangleVertices.push_back(vert3);
+
+	float boxStartCoords[3];
+	boxStartCoords[0] = min.getX();
+	boxStartCoords[1] = min.getY();
+	boxStartCoords[2] = min.getZ();
+
+	float boxEndCoords[3];
+	boxEndCoords[0] = max.getX();
+	boxEndCoords[1] = max.getY();
+	boxEndCoords[2] = max.getZ();
+
+	for(int i=0;i<3;i++){
+		//Vec3 n = boxNormals[i];
+		Project(triangleVertices,boxNormals[i],&triangleMin,&triangleMax);
+		if(triangleMax < boxStartCoords[i] || triangleMin > boxEndCoords[i]){
+			return false;
+		}
+	}
+
+	vector<Vec3> triangleEdges;
+	triangleEdges.push_back(vert1-vert2);
+	triangleEdges.push_back(vert2-vert3);
+	triangleEdges.push_back(vert3-vert1);
+
+	Vec3 triangleNormal = (triangleEdges[0] % triangleEdges[1]).norm();
+
+	double triangleOffset = triangleNormal * (vert1);
+
+	vector<Vec3> boxVertices;
+	float minX = min.getX();
+	float minY = min.getY();
+	float minZ = min.getZ();
+
+	float maxX = max.getX();
+	float maxY = max.getY();
+	float maxZ = max.getZ();
+	
+	boxVertices.push_back(Vec3(minX,minY,minZ));
+	boxVertices.push_back(Vec3(maxX,minY,minZ));
+	boxVertices.push_back(Vec3(minX,maxY,minZ));
+	boxVertices.push_back(Vec3(maxX,maxY,minZ));
+	boxVertices.push_back(Vec3(minX,minY,maxZ));
+	boxVertices.push_back(Vec3(maxX,minY,maxZ));
+	boxVertices.push_back(Vec3(minX,maxY,maxZ));
+	boxVertices.push_back(Vec3(maxX,maxY,maxZ));
+
+	Project(boxVertices, triangleNormal, &boxMin, &boxMax);
+    if (boxMax < triangleOffset || boxMin > triangleOffset){
+		return false;
+	}
+
+	for (int i = 0; i < 3; i++){
+    	for (int j = 0; j < 3; j++){
+			Vec3 axis = triangleEdges[i] % boxNormals[j];
+			Project(boxVertices, axis, &boxMin, &boxMax);
+			Project(triangleVertices, axis, &triangleMin, &triangleMax);
+			if (boxMax <= triangleMin || boxMin >= triangleMax){
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 bool Triangle::inBox(Vec3 min, Vec3 max){

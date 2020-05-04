@@ -10,7 +10,9 @@ int Obj::assignTris(Otree* subTree, vector<Triangle*>* subTris){
 	int within = 0;
 
 	for(auto& subTri : *subTris){
-		if(subTri->inBox(subTree->getMin(),subTree->getMax())){
+
+		//if(subTri->inBox(subTree->getMin(),subTree->getMax())){
+		if(subTri->triangleIntersectBox(subTree->getMin(),subTree->getMax())){
 			newTris->push_back(subTri);
 			within++;
 		}
