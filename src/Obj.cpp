@@ -3,6 +3,39 @@
 #include <limits>
 #include <math.h>
 #include <algorithm>
+
+int Obj::assignTris(Otree* subTree, vector<Triangle*>* subTris){
+	vector<Triangle*>* newTris = new vector<Triangle*>;
+
+	int within = 0;
+
+	for(auto& subTri : *subTris){
+		if(subTri->inBox(subTree->getMin(),subTree->getMax())){
+			newTris->push_back(subTri);
+			within++;
+		}
+	}
+
+	subTree->setData((void*) newTris);
+	return within;
+}
+
+void Obj::distributeTris(Otree* subTree, vector<Triangle*>* subTris){
+	int within = assignTris(subTree,subTris);
+	if(within <= 32){//If the assignment contains less than 32 we are done
+		return;
+	}
+	//Otherwise continue dividing and distributing!
+	subTree->divide();
+	for(int ndx=0;ndx<8;ndx++){
+		Otree* nodeTree = subTree->getNode(ndx);
+		vector<Triangle*>* nodeTris = (vector<Triangle*>*)subTree->getData();
+
+		distributeTris(nodeTree,nodeTris);
+	}
+
+}
+
 Obj::Obj(char* path, Vec3 displace, int sub){
 
 	float subd = sub;
@@ -44,6 +77,7 @@ Obj::Obj(char* path, Vec3 displace, int sub){
 
 
 		}
+		/*
 		if(sscanf(line, "f %i/%*i/%*i %i/%*i/%*i %i/%*i/%*i",&i1,&i2,&i3)){
 			Triangle tri(vecs[i1-1],vecs[i2-1],vecs[i3-1]);
 			tri.setColor(Vec3(0.476990,0.319510,0.288094));
@@ -51,11 +85,26 @@ Obj::Obj(char* path, Vec3 displace, int sub){
 			tri.setRoughness(0.90);
 			tris.push_back(tri);
 		}	
+		*/
+		if(sscanf(line, "f %i/%*i/%*i %i/%*i/%*i %i/%*i/%*i",&i1,&i2,&i3)){
+			Triangle* tri = new Triangle(vecs[i1-1],vecs[i2-1],vecs[i3-1]);
+			tri->setColor(Vec3(0.476990,0.319510,0.288094));
+			tri->setSpecular(0.20);
+			tri->setRoughness(0.90);
+			tris.push_back(tri);
+		}	
 	}
 
 	minG = Vec3(min_x,min_y,min_z);
 	maxG = Vec3(max_x,max_y,max_z);
 
+	tree = Otree(0,minG,maxG);
+
+	distributeTris(&tree,&tris);
+
+	printf("Done distributing across Octree\n");
+
+	/*
 	float x_range = maxG.getX() - minG.getX();
 	float y_range = maxG.getY() - minG.getY();
 	float z_range = maxG.getZ() - minG.getZ();
@@ -89,6 +138,7 @@ Obj::Obj(char* path, Vec3 displace, int sub){
 			}
 		}
 	}
+	*/
 
 }
 
@@ -131,6 +181,21 @@ bool Obj::boxIntersect(Ray ray, Vec3 min, Vec3 max) {
     return true; 
 } 
 
+vector<Triangle*> Obj::recursiveIntersect(Ray ray, Otree* subTree, vector<Triangle*> soFar){
+
+	if(subTree->getNode(0)==0){
+		vector<Triangle*>* tmp = (vector<Triangle*>*)subTree->getData();
+		soFar.insert( soFar.end(), tmp->begin(), tmp->end() );
+		return soFar;
+	}
+	for(int ndx=0; ndx<8; ndx++){
+		if(boxIntersect(ray, subTree->getNode(ndx)->getMin(), subTree->getNode(ndx)->getMax())){
+			soFar = recursiveIntersect(ray,subTree->getNode(ndx), soFar);
+		}
+	}
+	return soFar;
+}
+
 Collision Obj::intersect(Ray ray){
 
 	Collision colMin;
@@ -139,8 +204,20 @@ Collision Obj::intersect(Ray ray){
 
 	if(!boxIntersect(ray, minG, maxG))
 		return colMin;
+	
+	vector<Triangle*> relevantTris;
+	relevantTris = recursiveIntersect(ray,&tree,relevantTris);
 
+	for(auto& tri : relevantTris){
+		Collision curCol = tri->intersect(ray);
+		if (curCol.distance < colMin.distance && 0 < curCol.distance){
+			colMin.distance = curCol.distance;
+			colMin  = curCol;
+		}
+	}
 
+	return colMin;
+	/*
 	for(unsigned int bdx=0;bdx<minSub.size();bdx++){
 		if(boxIntersect(ray, minSub[bdx], maxSub[bdx])){
 			for(unsigned int pdx=0; pdx<indSub[bdx].size(); pdx++){
@@ -152,6 +229,7 @@ Collision Obj::intersect(Ray ray){
 			}
 		}
 	}
+	*/
 
 /*
 	
@@ -163,7 +241,7 @@ Collision Obj::intersect(Ray ray){
 		}
 	}
 */
-	return colMin;
+	//return colMin;
 }
 
 void Obj::print(){

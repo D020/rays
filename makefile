@@ -12,10 +12,13 @@ OBJS := $(patsubst %.c,%.o,$(SOURCES))
 #CFLAGS = -g -Wall
 
 #Optimized build
-CFLAGS = -O2 -flto -Wall 
+#CFLAGS = -O2 -flto -Wall
+
+#Optmized bug-fix build
+CFLAGS = -O2 -flto -Wall -Wl,--no-as-needed
 
 LIBS := pthread
-LIBS := $(addprefix -l,$(LIBS))
+LIBS := $(addprefix -,$(LIBS))
 
 all: main
 
@@ -23,7 +26,7 @@ all: main
 	$(GCC) $(CFLAGS) -c -o $@ $<
 
 main: $(OBJS)
-	$(GCC) $(OBJS) $(LIBS) $(CFLAGS) -o main
+	$(GCC) $(OBJS) $(CFLAGS) $(LIBS) -o main
 
 clean:
 	find . -name "*.o" -type f -delete

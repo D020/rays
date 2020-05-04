@@ -240,6 +240,16 @@ TO DO:
 
 	2: PROPER kd-tree or octree
 
-# 2020 May 3rd (2nd update)
+# 2020 May 3rd
 Optimizations: Only one thread is spawned pr. core/hyperthread. Compilerflag O2 and LTO. This gave a speedup of about 400%.
 Some changes in bundleTrace as well.
+
+# 2020 May 4th
+Octree implemented. Speedup of around 400%. But a few small holes appeared in the human model. Suspecting that the box-intersection (that have no <= or >=) is the culprit. This is just a wild guess though.
+
+![Alt text](media/holes.png?raw=true "Holes appearing")
+
+TO DO:
+
+	1: Add rectangle lights (somewhat initiated with random packets)
+

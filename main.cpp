@@ -12,6 +12,7 @@
 #include "src/Triangle.h"
 #include "src/Obj.h"
 #include "src/Scene.h"
+#include "src/Otree.h"
 #include <math.h>
 #include <algorithm>
 #include <thread>
@@ -20,9 +21,15 @@ using namespace std;
 using namespace std::chrono;
 
 int main() {
-	//Benchmark size /8
+	//Benchmark size /2
 	Plot plot(1920/2,1080/2);
-	
+	//Before Octree   2/2 man_sub2
+	//22678
+	//22310
+
+	//After Octree
+	//5942         OctDiv 64
+	//5096         OctDiv 32
 
 	Scene testscene;
 
@@ -55,14 +62,18 @@ int main() {
 	wall4.setColor(Vec3(1,1,0));
 	floor.setColor(Vec3(0,1,1));
 
+	char path[] = {"objects/man_sub2.obj"};
 
 	//Obj man("objects/man_sub.obj", Vec3(2,-2,-2), 4);
-	Obj man("objects/man_sub2.obj", Vec3(2,-2,-2), 4);
+	Obj man(path, Vec3(2,-2,-2), 4);
 	//Obj man("objects/cube.obj", Vec3(2,-2,-2), 4);
+	
+	//return 0;
+
 	man.setColor(Vec3(0.476990,0.319510,0.288094));
 	man.setReflectance(0.50);
 	man.setRoughness(0.10);
-
+	
 	testscene.addPrimitive(&ball1);
 	testscene.addPrimitive(&ball2);
 	testscene.addPrimitive(&ball3);
@@ -74,6 +85,7 @@ int main() {
 	testscene.addPrimitive(&man);
 
 	testscene.print();
+
 
 	int idx = 0;
 	int cores = 24;

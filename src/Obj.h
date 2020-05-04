@@ -4,6 +4,7 @@
 #include "Primitive.h"
 #include "Triangle.h"
 #include <vector>
+#include "Otree.h"
 using namespace std;
 
 class Obj : public Primitive {
@@ -16,11 +17,19 @@ private:
 	Vec3 displace;
 	Vec3 minG;
 	Vec3 maxG;
-	vector<Triangle> tris;
+	//vector<Triangle> tris;
+	vector<Triangle*> tris;
 
 	vector<Vec3> minSub;
 	vector<Vec3> maxSub;
 	vector< vector<int> > indSub;
+
+	Otree tree;
+
+	int assignTris(Otree* subTree, vector<Triangle*>* subTris);
+	void distributeTris(Otree* subTree, vector<Triangle*>* subTris);
+
+	vector<Triangle*> recursiveIntersect(Ray ray, Otree* subTree, vector<Triangle*> soFar);
 };
 
 #endif
