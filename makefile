@@ -30,8 +30,10 @@ main: $(OBJS)
 
 clean:
 	find . -name "*.o" -type f -delete
-	find . -name "*.ppm" -type f -delete
 	rm -rf main
 
 linecount:
 	find . -name '*.cpp' -not -name "*test*" | xargs wc -l
+
+	
+#find . -name "*.ppm" -type f -delete

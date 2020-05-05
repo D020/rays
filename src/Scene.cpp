@@ -75,8 +75,9 @@ Quat rotateFromTo(Vec3 v1, Vec3 v2){
 
 	Vec3 a;
 	float w;
-	if(0.999<v1*v2 || v1*v2<-0.999){
-		a = Vec3(0,0,0);}
+	if(0.999999<v1*v2 || v1*v2<-0.999999){
+        return Quat(1,0,0,0);
+    }
 	else{
 		a = v1 % v2;}
 	
@@ -213,6 +214,35 @@ vector<Ray> Scene::SceneTraceBundle(vector<Ray> rays, int bounce){
 
 			color = color + intensityDiff * primitives[col.hitIndex]->getColor();
 		}
+		
+        for(unsigned int ldx=0; ldx<surf_lights_center.size();ldx++){
+			float lightPower = surf_lightspower[ldx];
+
+            float intensityDiff = 0;
+            for(int pdx=0; pdx<10; pdx++){
+                //Is this point in the shadow of another object?
+                float u = prng_range(-1,1);
+                float v = prng_range(-1,1);
+                Vec3 toLight = (surf_lights_center[ldx] + u*surf_lights_edge1[ldx] + v*surf_lights_edge2[ldx]) - col.position;
+                //float intensitySpec;
+                if(shadeTrace(toLight, col.position)){;
+                    intensityDiff += 0;
+                    //intensitySpec = 0;
+                }
+                else{//Otherwise it's given a color with intensity according to the dot product scaled by distance to the light.
+                    float fallOff = toLight.length()*toLight.length();
+                    float dot = (-1*toLight.norm()*n) > 0 ? (-1*toLight.norm()*n) : 0;
+                    intensityDiff += lightPower * dot/fallOff;
+                    //intensitySpec = lightPower * pow(dot,8)/fallOff;
+                }
+            }
+            
+            intensityDiff = intensityDiff/10;
+
+			color = color + intensityDiff * primitives[col.hitIndex]->getColor();
+		}
+		
+		
 		//######### END OF LIGHT #############
 
 		//float specular  = primitives[col.hitIndex]->getSpecular();
@@ -340,6 +370,13 @@ void Scene::renderPart(int ya, int yb, int xa, int xb, Plot* plot){
 void Scene::addPointLight(Vec3 pos, float power){
 	point_lights.push_back(pos);
 	point_lightspower.push_back(power);
+}
+
+void Scene::addSurfLight(Vec3 center, Vec3 edge1, Vec3 edge2, float power){
+    surf_lights_center.push_back(center);
+    surf_lights_edge1.push_back(edge1);
+    surf_lights_edge2.push_back(edge2);
+    surf_lightspower.push_back(power);
 }
 
 void Scene::print(){

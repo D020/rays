@@ -22,6 +22,7 @@ public:
 	Scene(int width, int height);
 	void addPrimitive(Primitive* prim);
 	void addPointLight(Vec3 pos, float power);
+    void addSurfLight(Vec3 corner, Vec3 p1, Vec3 p2, float power);
 	void setRays(Vec3 org, Vec3 dir, Plot* plot);
 	void moveLight(int ldx, Vec3 org);
 	SceneCollision intersect(Ray ray, int ignore);
@@ -38,6 +39,11 @@ private:
 
 	vector<Vec3>point_lights;
 	vector<float>point_lightspower;
+    
+    vector<Vec3>surf_lights_center;
+    vector<Vec3>surf_lights_edge1;
+    vector<Vec3>surf_lights_edge2;
+    vector<float>surf_lightspower;
 
 	float horizontalFOVradians;
 	float   verticalFOVradians;
