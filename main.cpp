@@ -22,7 +22,7 @@ using namespace std::chrono;
 
 int main() {
 	//Benchmark size /2
-	Plot plot(1920,1080);
+	Plot plot(1920/4,1080/4);
 	//Before Octree   2/2 man_sub2
 	//22678
 	//22310
@@ -64,17 +64,18 @@ int main() {
     wall5.setColor(Vec3(1,1,1));
 	floor.setColor(Vec3(0,1,1));
 
-	char path[] = {"objects/man_sub2.obj"};
+	//char path[] = {"objects/man_sub2.obj"};
+	//Obj man(path, Vec3(2,-2,-2), 4);
 
-	//Obj man("objects/man_sub.obj", Vec3(2,-2,-2), 4);
-	Obj man(path, Vec3(2,-2,-2), 4);
-	//Obj man("objects/cube.obj", Vec3(2,-2,-2), 4);
-	
-	//return 0;
+	//man.setColor(Vec3(0.476990,0.319510,0.288094));
+	//man.setReflectance(0.50);
+	//man.setRoughness(0.10);
 
-	man.setColor(Vec3(0.476990,0.319510,0.288094));
-	man.setReflectance(0.50);
-	man.setRoughness(0.10);
+    char path2[] = {"objects/lamp.obj"};
+    Obj lamp(path2,Vec3(-3,3,0),4);
+    lamp.setColor(Vec3(0.1,0.1,0.1));
+    lamp.setReflectance(0.2);
+    lamp.setRoughness(0.3);
 	
 	testscene.addPrimitive(&ball1);
 	testscene.addPrimitive(&ball2);
@@ -85,7 +86,8 @@ int main() {
 	testscene.addPrimitive(&wall4);
     testscene.addPrimitive(&wall5);
 	testscene.addPrimitive(&floor);
-	testscene.addPrimitive(&man);
+	//testscene.addPrimitive(&man);
+    testscene.addPrimitive(&lamp);
 
 	testscene.print();
 
@@ -94,15 +96,16 @@ int main() {
 	int cores = 8;
 	char str[10];
 
-	testscene.setRays(Vec3(0,0,-10),Vec3(0,0.1,-1),&plot);
-	testscene.addPointLight(Vec3(0,0,0),100);
+	testscene.setRays(Vec3(0,2,-10),Vec3(0,0,-1),&plot);
+	//testscene.addPointLight(Vec3(0,0,0),100);
 	//testscene.addPointLight(Vec3(2,4,-5),30);
+	testscene.addPointLight(Vec3(-3,3,0),100);
     
-    testscene.addSurfLight(Vec3(4.5,4.95,-7),Vec3(0.40,0,0),Vec3(0,0,0.40),400);
+    testscene.addSurfLight(Vec3(4.5,4.95,-7),Vec3(0.40,0,0),Vec3(0,0,0.40),100);
     
 	for(float y=0;y<=6;y+=0.2){
 
-		testscene.moveLight(0,Vec3(-3+y,0,-5));
+		//testscene.moveLight(0,Vec3(-3+y,0,-5));
 		//ball3.setRoughness(y);
 		sprintf(str,"%02d.ppm",idx);
 

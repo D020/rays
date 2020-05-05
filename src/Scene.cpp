@@ -112,7 +112,7 @@ void Scene::setRays(Vec3 org, Vec3 dir, Plot* plot){
 	for(int i=0; i<height; i++){
 		for(int j=0; j<width; j++){
 
-			float x = -9.0 + (16.0/float(width ))*j;
+			float x = -8.0 + (16.0/float(width ))*j;
 			float y =  4.5 - (9.0 /float(height))*i;
 
 			unsigned int idx = i*width+j;
