@@ -91,14 +91,14 @@ int main() {
 
 
 	int idx = 0;
-	int cores = 4;
+	int cores = 8;
 	char str[10];
 
 	testscene.setRays(Vec3(0,0,-10),Vec3(0,0.1,-1),&plot);
 	testscene.addPointLight(Vec3(0,0,0),100);
 	//testscene.addPointLight(Vec3(2,4,-5),30);
     
-    testscene.addSurfLight(Vec3(4.5,4.95,-7),Vec3(0.15,0,0),Vec3(0,0,0.15),400);
+    testscene.addSurfLight(Vec3(4.5,4.95,-7),Vec3(0.40,0,0),Vec3(0,0,0.40),400);
     
 	for(float y=0;y<=6;y+=0.2){
 
