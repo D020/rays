@@ -35,12 +35,12 @@ int main() {
 
 	printf("\n\n\n\n\n");
 
-	Sphere ball1(Vec3(0,0,0),2);	
+	Sphere ball1(Vec3(0,0,0),2/1.5);	
 	ball1.setColor(Vec3(0,0,1.0));
 	ball1.setReflectance(0.7);	
 	ball1.setRoughness(0.05);	
 
-	Sphere ball2(Vec3(3,1,0),2.5);
+	Sphere ball2(Vec3(3,1,0),2.5/3);
 	ball2.setColor(Vec3(1.0,0,0));
 	ball2.setReflectance(0.8);
 	ball2.setRoughness(0.5);
@@ -76,9 +76,9 @@ int main() {
 	man.setReflectance(0.50);
 	man.setRoughness(0.10);
 	
-	//testscene.addPrimitive(&ball1);
-	//testscene.addPrimitive(&ball2);
-	//testscene.addPrimitive(&ball3);
+	testscene.addPrimitive(&ball1);
+	testscene.addPrimitive(&ball2);
+	testscene.addPrimitive(&ball3);
 	testscene.addPrimitive(&wall1);
 	testscene.addPrimitive(&wall2);
 	testscene.addPrimitive(&wall3);
@@ -95,10 +95,10 @@ int main() {
 	char str[10];
 
 	testscene.setRays(Vec3(0,0,-10),Vec3(0,0.1,-1),&plot);
-	testscene.addPointLight(Vec3(0,0,0),10);
+	testscene.addPointLight(Vec3(0,0,0),100);
 	//testscene.addPointLight(Vec3(2,4,-5),30);
     
-    testscene.addSurfLight(Vec3(4.5,4.95,-3),Vec3(0.15,0,0),Vec3(0,0,0.15),150);
+    testscene.addSurfLight(Vec3(4.5,4.95,-7),Vec3(0.15,0,0),Vec3(0,0,0.15),400);
     
 	for(float y=0;y<=6;y+=0.2){
 
